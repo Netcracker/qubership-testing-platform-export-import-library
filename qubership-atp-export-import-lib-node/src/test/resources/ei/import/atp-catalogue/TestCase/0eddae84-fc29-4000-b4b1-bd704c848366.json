@@ -1,0 +1,32 @@
+{
+  "uuid": "0eddae84-fc29-4000-b4b1-bd704c848366",
+  "name": "sc1 c2 ds11",
+  "modifiedBy": {
+    "id": "c92e1fce-98af-49b0-a257-61432a5af419",
+    "username": null,
+    "firstName": null,
+    "lastName": null,
+    "email": "email profile",
+    "roles": [
+      "offline_access",
+      "ATP_ADMIN",
+      "uma_authorization"
+    ],
+    "fullName": ""
+  },
+  "modifiedWhen": 1634821698914,
+  "projectUuid": "75ff7376-7231-4f8f-8144-ede2a5ea9762",
+  "testPlanUuid": "51e98a5d-7472-43b8-bdc8-c587767f9d01",
+  "testScenarioUuid": "1e247eef-b13c-469d-bbd2-483a9e6b3749",
+  "datasetUuid": "78314a52-cc1a-4889-ad4b-ede72a75cef5",
+  "datasetStorageUuid": "748e0171-88b2-483e-9539-1d277cb30d81",
+  "priority": "LOW",
+  "status": "OPEN",
+  "flags": [],
+  "labelIds": [
+    "2d9bb400-2c34-4ffb-8e89-a3c4ad7899c1",
+    "2d9bb400-2c34-4ffb-8e89-a3c4ad7899c2"
+  ],
+  "order": [],
+  "components": []
+}

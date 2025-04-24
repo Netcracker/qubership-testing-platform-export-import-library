@@ -1,0 +1,29 @@
+{
+  "uuid" : "75a5c284-f86b-4edd-9343-3086732b5dad",
+  "engine" : "javascript",
+  "content" : "function main(date, format, timeZone) {     var calendar = Packages.java.util.Calendar.getInstance();          if(timeZone != null){            var timezone = Packages.java.util.TimeZone.getTimeZone(timeZone);            calendar.setTimeZone(timezone);        }       if(format.equals(\"millis\")){        calendar.setTimeInMillis(Packages.java.lang.Long.parseLong(date));            }    else {        var sdf = new Packages.java.text.SimpleDateFormat(format);        var date1 = sdf.parse(date);        calendar.setTimeInMillis(date1.getTime());        }    return Packages.java.lang.Integer.parseInt(calendar.get(Packages.java.util.Calendar.MONTH)+1);}",
+  "parameters" : [
+    {
+      "uuid" : "42b3d05c-577f-4063-8a98-f90f362d3014",
+      "name" : "date",
+      "description" : "Date in specified format, e.g: '2015-01-12 10:30:00'",
+      "optional" : false
+    },
+    {
+      "uuid" : "87bc11de-387c-4870-96b8-54eade2f7884",
+      "name" : "format",
+      "description" : "Date and time pattern string, e.g: 'yyyy-MM-dd HH:mm:ss'",
+      "optional" : false
+    },
+    {
+      "uuid" : "72516900-a561-4bf7-83ed-234717da6851",
+      "name" : "timezone",
+      "description" : "General timezone for displaying the date, e.g: 'GMT+8'",
+      "optional" : true
+    }
+  ],
+  "name" : "GET_MONTH",
+  "description" : "Returns month of the reported date with reported format in some timezone(optional argument), e.g: $GET_MONTH('9.06.2013', 'dd.MM.yyyy')",
+  "modifiedBy" : "dcd1a899-09d6-42b8-bb59-8764d2912c10",
+  "modifiedWhen" : ""
+}
