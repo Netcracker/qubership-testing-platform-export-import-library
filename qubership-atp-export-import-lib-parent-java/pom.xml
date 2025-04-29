@@ -11,10 +11,10 @@
     <packaging>pom</packaging>
 
     <properties>
-        <spring.boot.version>2.7.15</spring.boot.version>
+        <spring.boot.version>2.7.18</spring.boot.version>
         <spring.cloud.version>2021.0.8</spring.cloud.version>
         <openclover.version>4.2.0</openclover.version>
-        <google.guava.version>27.0-jre</google.guava.version>
+        <google.guava.version>32.0.0-jre</google.guava.version>
         <mockito.all.version>1.9.5</mockito.all.version>
         <springdoc.version>1.7.0</springdoc.version>
         <apache.httpcomponents.version>4.5.5</apache.httpcomponents.version>

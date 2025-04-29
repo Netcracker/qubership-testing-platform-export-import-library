@@ -237,10 +237,8 @@ public class NttModelLoader {
         if (project == null) {
             return;
         }
-
         boolean isTemplate = project instanceof TemplateProject;
         String fileName = CommonUtils.getSafeFilename(project.getName());
-
         Path directory = createFolder(directoryPath.resolve(EXPORT_PROJECTS_FOLDER_NAME));
 
         String projectFileText;
@@ -278,13 +276,10 @@ public class NttModelLoader {
         if (project == null) {
             return;
         }
-
-        boolean isTemplate = project instanceof TemplateProject;
         String fileName = CommonUtils.getSafeFilename(project.getName());
-
         Path directory = createFolder(directoryPath.resolve(EXPORT_PROJECTS_FOLDER_NAME));
 
-        String dataSetFileExtension = isTemplate
+        String dataSetFileExtension = project instanceof TemplateProject
                 ? Constants.TXT_TEMPLATE_DATASET_EXTENTION
                 : Constants.TXT_DATASET_EXTENTION;
         Path dataSetFile = directory.resolve(fileName + dataSetFileExtension);

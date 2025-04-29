@@ -20,7 +20,14 @@ import java.util.concurrent.Callable;
 
 public interface CancellableExportImportTask extends Callable<Object> {
 
+    /**
+     * Check if the Task is cancelled or not.
+     * @return true if Task is cancelled, otherwise false.
+     */
     boolean isCancelled();
 
+    /**
+     * Cancel the Task.
+     */
     void setCancelled();
 }
