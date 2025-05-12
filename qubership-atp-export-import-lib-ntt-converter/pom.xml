@@ -3,7 +3,7 @@
     <parent>
         <artifactId>qubership-atp-export-import-lib-parent-java</artifactId>
         <groupId>org.qubership.atp.ei</groupId>
-        <version>0.2.38</version>
+        <version>${revision}</version>
         <relativePath>../qubership-atp-export-import-lib-parent-java/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -54,13 +54,10 @@
 
     <profiles>
         <profile>
-            <id>default</id>
+            <id>central</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-        </profile>
-        <profile>
-            <id>with-analyzers</id>
             <build>
                 <plugins>
                     <plugin>

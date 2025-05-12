@@ -3,7 +3,7 @@
     <parent>
         <artifactId>qubership-atp-export-import-lib</artifactId>
         <groupId>org.qubership.atp.ei</groupId>
-        <version>0.2.38</version>
+        <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -26,9 +26,9 @@
         <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
         <micrometer.version>1.5.14</micrometer.version>
 
-        <atp.integration.version>0.2.38</atp.integration.version>
-        <atp.auth.version>1.2.59</atp.auth.version>
-        <atp.common.version>0.0.42</atp.common.version>
+        <atp.integration.version>0.2.38-SNAPSHOT</atp.integration.version>
+        <atp.auth.version>1.2.59-SNAPSHOT</atp.auth.version>
+        <atp.common.version>0.0.42-SNAPSHOT</atp.common.version>
 
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.30</lombok.version>

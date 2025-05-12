@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.qubership.atp.ei</groupId>
         <artifactId>qubership-atp-export-import-lib</artifactId>
-        <version>0.2.38</version>
+        <version>${revision}</version>
     </parent>
     <groupId>org.qubership.atp.ei.distribution</groupId>
     <artifactId>qubership-atp-export-import-lib-distribution</artifactId>
