@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   mvn-snapshot-deploy:
-    uses: netcracker/qubership-testing-platform-crypt-library/.github/workflows/re-maven-snapshot-deploy.yaml@build_process
+    uses: netcracker/qubership-testing-platform-crypt-library/.github/workflows/re-maven-snapshot-deploy.yaml@main
     with:
       java-version: "21"
       additional-mvn-args: ""
