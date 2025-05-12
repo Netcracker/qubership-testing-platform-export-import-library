@@ -41,9 +41,9 @@ import org.qubership.atp.ei.ntt.settings.model.environment.EnvironmentStorage;
 
 public final class Settings {
 
-    private static DaoFactory factory = DaoFactory.getInstance();
-    private static SettingsResource settingsDAO;
-    private static Map<Class<?>, Object> wrapper = new HashMap<>();
+    private static final DaoFactory factory = DaoFactory.getInstance();
+    private static final SettingsResource settingsDAO;
+    private static final Map<Class<?>, Object> wrapper = new HashMap<>();
 
     static {
         settingsDAO = factory.loadResource(new SettingsResource());
@@ -88,7 +88,6 @@ public final class Settings {
 
     /**
      * Environment settings controller.
-     * <p>
      */
     public static class EnvironmentSettings implements EnvironmentStorage {
 
@@ -98,7 +97,6 @@ public final class Settings {
         private List<EnvironmentItemLinkDal> envItemLinkDals = factory.get(
                                                                 settingsDAO, EnvironmentItemLinksSectionDal.class)
                                                                 .getEnvironmentItemLinks();
-
 
         @Override
         public List<EnvironmentListDal> getEnvironmentListDals() {

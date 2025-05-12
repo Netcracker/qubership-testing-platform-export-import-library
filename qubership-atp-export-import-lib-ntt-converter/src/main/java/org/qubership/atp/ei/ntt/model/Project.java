@@ -74,7 +74,6 @@ public interface Project extends ModelItem, ContainerTreeNode {
 
     /**
      * Sets project type.
-     * <p/>
      * <p>
      * Project types are XML, TXT, SQL, story.
      * </p>

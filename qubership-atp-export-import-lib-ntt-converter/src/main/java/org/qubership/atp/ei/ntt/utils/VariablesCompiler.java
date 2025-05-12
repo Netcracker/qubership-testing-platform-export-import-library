@@ -81,11 +81,10 @@ public class VariablesCompiler {
         return name;
     }
 
-
     /**
      * Precompile ActionEntity name:
      * Put action parameters into replacers by Rules,
-     * Simple parameters: "param", 'param', <param>, [param],
+     * Simple parameters: "param", 'param', [param],
      * Complex parameters:
      * Map parameter: ("name"='value')
      * Array parameter: ("param").

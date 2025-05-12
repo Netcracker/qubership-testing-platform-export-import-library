@@ -93,7 +93,6 @@ public interface TreeNode extends GenericItem {
      * Returns an array with flags applied to the TreeNode.
      *
      * @return Array of flags.
-     * @see
      */
     String[] getFlags();
 
@@ -104,7 +103,6 @@ public interface TreeNode extends GenericItem {
      * @param option      Name of the option.
      * @param optionValue Value of the option.
      * @param <T>         Generic type of the option.
-     * @see
      */
     <T> void setFlagOption(String flag, String option, T optionValue);
 
