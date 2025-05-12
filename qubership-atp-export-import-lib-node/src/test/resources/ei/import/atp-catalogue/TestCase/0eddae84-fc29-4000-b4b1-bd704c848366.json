@@ -7,11 +7,7 @@
     "firstName": null,
     "lastName": null,
     "email": "email profile",
-    "roles": [
-      "offline_access",
-      "ATP_ADMIN",
-      "uma_authorization"
-    ],
+    "roles": ["offline_access", "ATP_ADMIN", "uma_authorization"],
     "fullName": ""
   },
   "modifiedWhen": 1634821698914,
