@@ -127,6 +127,9 @@ jobs:
         with:
           maven-version: 3.8.8
 
+      - name: Show Maven version
+        run: mvn --version
+
       - name: "Deploy to Maven Central"
         if: ${{ inputs.target-store == 'maven-central' }}
         run: |
