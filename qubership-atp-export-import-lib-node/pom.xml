@@ -216,6 +216,7 @@
         </profile>
     </profiles>
 
+
     <properties>
         <tests.argLine>
             -Dspring.config.location=qubership-atp-export-import-lib-backend\src\main\config\application.properties
