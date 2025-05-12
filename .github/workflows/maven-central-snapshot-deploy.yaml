@@ -1,164 +1,38 @@
 ---
-# The workflow to deploy snapshot artifact versions to Maven Central or GitHub Packages
-# Inputs:
-#   java-version: JDK version (e.g. '21')
-#   target-store: Target store for the artifact ('maven-central' or 'github-packages')
-#   additional-mvn-args: Additional mvn cmd-line params (e.g. '-Dskip.tests=true')
-# Secrets:
-#   maven-username: Maven username
-#   maven-token: Maven token
-#   gpg-private-key: GPG private key
-#   gpg-passphrase: GPG passphrase
+# The workflow to deploy snapshot artifact versions to Maven Central
+# Fill free to adjust java version and additional mvn command-line parameters
+# The workflow will trigger on pushes into branches different from main and release
+# Please make sure that the version in the pom.xml file has the SNAPSHOT postfix
 
-name: Maven deploy
+# Please adjust pom.xml file for your project according to the instructions:
+# https://github.com/Netcracker/qubership-workflow-hub/blob/main/docs/maven-publish-pom-preparation_doc.md
+
+name: Maven deploy snapshot
 
 on:
-  workflow_call:
-    inputs:
-      java-version:
-        type: string
-        description: "JDK version (e.g. '21')"
-        required: false
-        default: "21"
-      target-store:
-        type: string
-        description: "Target store for the artifact"
-        required: false
-        default: "maven-central"
-      additional-mvn-args:
-        type: string
-        description: "Additional mvn cmd-line params (e.g. '-Dskip.tests=true')"
-        required: false
-        default: ""
-    secrets:
-      maven-username:
-        required: false
-      maven-token:
-        required: true
-      gpg-private-key:
-        required: false
-      gpg-passphrase:
-        required: false
+  push:
+    branches-ignore:
+      - "**release*"
+      - "prettier/**"
+      - "dependabot/**"
+    paths-ignore:
+      - "docs/**"
+      - "README.md"
+      - ".github/**"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
 
 jobs:
-  mvn-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout code"
-        uses: actions/checkout@v4
-      - name: "Setup xmlstarlet"
-        run: |
-          # Skip installing pacakge docs {makes the man-db trigger much faster)
-          sudo tee /etc/dpkg/dpkg.cfg.d/01_nodoc > /dev/null << 'EOF'
-          path-exclude /usr/share/doc/*
-          path-exclude /usr/share/man/*
-          path-exclude /usr/share/info/*
-          EOF
-          sudo apt install -y xmlstarlet
-      - name: "Check that version is SNAPSHOT"
-        shell: bash
-        run: |
-          cd ${GITHUB_WORKSPACE}
-          VERSION_CHECK=$(xmlstarlet sel -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x:project/x:version[contains(., '{revision}')]" ./pom.xml || echo "")
-          # If project/version is not a reference to project/properties/revision, then check project/version if it contains '-SNAPSHOT'
-          # Else check project/properties/revision if it contains '-SNAPSHOT'
-          if [[ "${VERSION_CHECK}" == "" ]]
-          then
-            IS_SNAPSHOT=$(xmlstarlet sel -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x:project/x:version[contains(., '-SNAPSHOT')]" ./pom.xml || echo "")
-          else
-            IS_SNAPSHOT=$(xmlstarlet sel -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x:project/x:properties/x:revision[contains(., '-SNAPSHOT')]" ./pom.xml || echo "")
-          fi
-          if [[ "${IS_SNAPSHOT}" == "" ]]
-          then
-            echo "ℹ️ The project's version in the pom.xml has no '-SNAPSHOT' postfix." >> $GITHUB_STEP_SUMMARY
-            echo "ℹ️ Workflow will not deploy any artifacts. It will execute 'mvn install' command." >> $GITHUB_STEP_SUMMARY
-            echo "ℹ️ The project's version in the pom.xml has no '-SNAPSHOT' postfix."
-            echo "ℹ️ Workflow will not deploy any artifacts. It will execute 'mvn install' command."
-            echo "IS_SNAPSHOT=false" >> $GITHUB_ENV
-            echo "MVN_COMMAND=install" >> $GITHUB_ENV
-          else
-            echo "✅ The project's version in the pom.xml has '-SNAPSHOT' postfix" >> $GITHUB_STEP_SUMMARY
-            echo "✅ Workflow will deploy SNAPSHOT artifact" >> $GITHUB_STEP_SUMMARY
-            echo "✅ The project's version in the pom.xml has '-SNAPSHOT' postfix."
-            echo "✅ Workflow will deploy SNAPSHOT artifact"
-            echo "IS_SNAPSHOT=true" >> $GITHUB_ENV
-            echo "MVN_COMMAND=deploy" >> $GITHUB_ENV
-          fi
-      - name: "Setup mvn additional args"
-        shell: bash
-        run: |
-          if [[ "${{ inputs.additional-mvn-args }}" == "" ]]
-          then
-            echo "ℹ️ No additional mvn args provided. Using default ones." >> $GITHUB_STEP_SUMMARY
-            echo "ℹ️ No additional mvn args provided. Using default ones."
-          else
-            ADDITIONAL_MVN_ARGS=""
-            for arg in ${{ inputs.additional-mvn-args }}
-            do
-              ADDITIONAL_MVN_ARGS="${ADDITIONAL_MVN_ARGS} \"${arg}\""
-            done
-            echo "✅ Additional mvn args provided: ${ADDITIONAL_MVN_ARGS}" >> $GITHUB_STEP_SUMMARY
-            echo "✅ Additional mvn args provided: ${ADDITIONAL_MVN_ARGS}"
-          fi
-          echo "ADDITIONAL_MVN_ARGS=${ADDITIONAL_MVN_ARGS}" >> $GITHUB_ENV
-      - name: Cache local Maven repository
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: maven-${{ runner.os }}
-          restore-keys: |
-            maven-${{ runner.os }}
-      # ================= Maven Central deployment part
-      - name: "Set up JDK for Maven Central deployment"
-        if: ${{ inputs.target-store == 'maven-central' }}
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ inputs.java-version }}
-          distribution: "temurin"
-          server-id: central
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.gpg-private-key }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
-
-      - name: "Set up Maven"
-        if: ${{ inputs.target-store == 'maven-central' }}
-        uses: s4u/setup-maven-action@v1
-        with:
-          maven-version: 3.8.8
-
-      - name: "Deploy to Maven Central"
-        if: ${{ inputs.target-store == 'maven-central' }}
-        run: |
-          mvn --batch-mode ${{ env.MVN_COMMAND }} ${ADDITIONAL_MVN_ARGS}
-        env:
-          MAVEN_USERNAME: ${{ secrets.maven-username }}
-          MAVEN_PASSWORD: ${{ secrets.maven-token }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.gpg-passphrase }}
-
-      # ================= GitHub Packages deployment part
-      - name: "Set up JDK for GitHub Packages deployment"
-        if: ${{ inputs.target-store == 'github-packages' }}
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ inputs.java-version }}
-          distribution: "temurin"
-          server-id: github
-          server-username: GITHUB_USER
-          server-password: GITHUB_TOKEN
-          gpg-private-key: ${{ secrets.gpg-private-key }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
-
-      - name: "Disable Maven Central Deploy"
-        if: ${{ inputs.target-store == 'github-packages' }}
-        run: |
-          xmlstarlet ed -L -d "/_:project/_:build/_:plugins/_:plugin[./_:artifactId='central-publishing-maven-plugin']" ./pom.xml
-
-      - name: "Deploy to GitHub packages"
-        if: ${{ inputs.target-store == 'github-packages' }}
-        run: |
-          mvn --batch-mode ${{ env.MVN_COMMAND }} -DaltDeploymentRepository=github::https://maven.pkg.github.com/${{ github.repository }} ${ADDITIONAL_MVN_ARGS}
-        env:
-          GITHUB_TOKEN: ${{ secrets.maven-token }}
-          GITHUB_USER: ${{ github.actor }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.gpg-passphrase }}
+  mvn-snapshot-deploy:
+    uses: netcracker/qubership-testing-platform-crypt-library/.github/workflows/re-maven-snapshot-deploy.yaml@build_process
+    with:
+      java-version: "21"
+      additional-mvn-args: ""
+      target-store: "maven-central"
+    secrets:
+      maven-username: ${{ secrets.MAVEN_USER }}
+      maven-token: ${{ secrets.MAVEN_PASSWORD }}
+      gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
