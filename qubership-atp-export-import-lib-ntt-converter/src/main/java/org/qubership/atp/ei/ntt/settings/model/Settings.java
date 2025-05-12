@@ -88,7 +88,7 @@ public final class Settings {
 
     /**
      * Environment settings controller.
-     * <p />
+     * <p>
      */
     public static class EnvironmentSettings implements EnvironmentStorage {
 
