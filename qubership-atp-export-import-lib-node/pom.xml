@@ -2,7 +2,7 @@
     <parent>
         <artifactId>qubership-atp-export-import-lib-parent-java</artifactId>
         <groupId>org.qubership.atp.ei</groupId>
-        <version>0.2.39-SNAPSHOT</version>
+        <version>0.2.39</version>
         <relativePath>../qubership-atp-export-import-lib-parent-java/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
