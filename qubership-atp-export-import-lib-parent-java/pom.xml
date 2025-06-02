@@ -3,7 +3,7 @@
     <parent>
         <artifactId>qubership-atp-export-import-lib</artifactId>
         <groupId>org.qubership.atp.ei</groupId>
-        <version>${revision}</version>
+        <version>0.2.38-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
