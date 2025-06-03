@@ -6,6 +6,7 @@
         <version>0.2.38-SNAPSHOT</version>
         <relativePath>../qubership-atp-export-import-lib-parent-java/pom.xml</relativePath>
     </parent>
+    <name>qubership-atp-export-import-lib-ntt-converter</name>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>qubership-atp-export-import-lib-ntt-converter</artifactId>
     <build>
