@@ -23,7 +23,7 @@
     </properties>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Export import tool</description>
+    <description>Qubership Testing Platform Export Import Library</description>
     <url>https://github.com/Netcracker/qubership-testing-platform-export-import-library</url>
     <licenses>
         <license>

@@ -43,9 +43,6 @@ import org.qubership.atp.ei.ntt.settings.store.option.OptionProcessException;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
-/**
- * TODO Make summary for this class.
- */
 public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalConfiguration> {
 
     private static final List<Class<?>> primitives = Lists.<Class<?>>newArrayList(String.class, boolean.class,
@@ -180,7 +177,7 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
     }
 
     @Override
-    public void saveOption(Object object, Field field, HierarchicalConfiguration source) throws OptionProcessException {
+    public void saveOption(Object object, Field field, HierarchicalConfiguration source) {
         setProperty(field.getAnnotation(Option.class).key(), getFieldValue(object, field), source);
     }
 
