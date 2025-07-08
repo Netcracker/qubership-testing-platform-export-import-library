@@ -43,9 +43,6 @@ import org.qubership.atp.ei.ntt.settings.store.option.OptionProcessException;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
-/**
- * TODO Make summary for this class.
- */
 public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalConfiguration> {
 
     private static final List<Class<?>> primitives = Lists.<Class<?>>newArrayList(String.class, boolean.class,
@@ -54,13 +51,15 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
     private Logger log = Logger.getLogger(ApacheOptionProcessor.class);
 
     @Override
-    public Object loadOption(Field field, HierarchicalConfiguration source) throws OptionProcessException {
+    public Object loadOption(final Field field, final HierarchicalConfiguration source) throws OptionProcessException {
         String key = field.getAnnotation(Option.class).key();
         Class<?> type = field.getType();
         return getProperty(type, key, source);
     }
 
-    private Object getProperty(Class type, String key, HierarchicalConfiguration source) throws OptionProcessException {
+    private Object getProperty(final Class type,
+                               final String key,
+                               final HierarchicalConfiguration source) throws OptionProcessException {
         String shortCanonicalName = ClassUtils.getShortCanonicalName(type);
         try {
             Method method = source.getClass()
@@ -77,8 +76,8 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
     /**
      * TODO Make javadoc documentation for this method.
      */
-    public Object loadUnclassifiedParameters(Field field, HierarchicalConfiguration source)
-                                                                    throws OptionProcessException {
+    public Object loadUnclassifiedParameters(final Field field,
+                                             final HierarchicalConfiguration source) throws OptionProcessException {
         String additionalKey = field.getAnnotation(AdditionalOption.class).key();
         Class<?> type = String.class;
         Iterator<String> keys = source.getKeys(additionalKey);
@@ -91,7 +90,7 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
     }
 
     @Override
-    public Object loadOptions(Field field, HierarchicalConfiguration source) throws OptionProcessException {
+    public Object loadOptions(final Field field, final HierarchicalConfiguration source) throws OptionProcessException {
         String key = field.getAnnotation(Options.class).key();
         Type fieldGenericType = field.getGenericType();
         if (fieldGenericType instanceof ParameterizedType) {
@@ -129,7 +128,7 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
 
     @Override
     @SuppressWarnings("unchecked")
-    public <Y> Y load(Y object, HierarchicalConfiguration source) {
+    public <Y> Y load(final Y object, final HierarchicalConfiguration source) {
         Class<?> daoClass = object.getClass();
         while (!daoClass.getSuperclass().equals(Object.class)) {
             for (Field field : daoClass.getDeclaredFields()) {
@@ -164,7 +163,7 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
         return object;
     }
 
-    private void setFieldValue(Object object, Field field, Object value) {
+    private void setFieldValue(final Object object, final Field field, final Object value) {
         Object val = value;
         try {
             field.setAccessible(true);
@@ -180,15 +179,15 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
     }
 
     @Override
-    public void saveOption(Object object, Field field, HierarchicalConfiguration source) throws OptionProcessException {
+    public void saveOption(final Object object, final Field field, final HierarchicalConfiguration source) {
         setProperty(field.getAnnotation(Option.class).key(), getFieldValue(object, field), source);
     }
 
-    private void setProperty(String key, Object value, HierarchicalConfiguration source) {
+    private void setProperty(final String key, final Object value, final HierarchicalConfiguration source) {
         source.setProperty(key, value);
     }
 
-    private void generateTreeByKey(String key, HierarchicalConfiguration configuration) {
+    private void generateTreeByKey(final String key, final HierarchicalConfiguration configuration) {
         ConfigurationNode rootNode = configuration.getRootNode();
         Iterable<String> split = Splitter.on('.').split(key);
         for (String nodeName : split) {
@@ -198,22 +197,26 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
                 index = Integer.parseInt(matcher.group(1));
             }
             if (rootNode.getChildren(nodeName).size() <= index) {
-                rootNode.addChild(new HierarchicalConfiguration.Node(nodeName.replaceAll("\\(\\d+\\)",
-                                                                                        StringUtils.EMPTY)));
+                rootNode.addChild(new HierarchicalConfiguration.Node(
+                        nodeName.replaceAll("\\(\\d+\\)", StringUtils.EMPTY)));
             }
             rootNode = rootNode.getChildren(nodeName.replaceAll("\\(\\d+\\)", StringUtils.EMPTY)).get(index);
         }
     }
 
     @Override
-    protected void iterate(String key, HierarchicalConfiguration source, List<?> toIterate, Class<?> collectionClass) {
+    protected void iterate(final String key,
+                           final HierarchicalConfiguration source,
+                           final List<?> toIterate,
+                           final Class<?> collectionClass) {
         for (int i = 0; i < toIterate.size(); i++) {
             if (source.getMaxIndex(key) < i) {
                 if (key.lastIndexOf('.') > 0) {
                     source.addNodes(
                             key.substring(0, key.lastIndexOf('.')),
                             Lists.newArrayList(
-                                    new HierarchicalConfiguration.Node(key.substring(key.lastIndexOf('.') + 1))));
+                                    new HierarchicalConfiguration.Node(
+                                            key.substring(key.lastIndexOf('.') + 1))));
                 } else {
                     source.getRootNode().addChild(new HierarchicalConfiguration.Node(key));
                 }
@@ -238,11 +241,16 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
         }
     }
 
+    /**
+     * Get Logger.
+     *
+     * @return Logger object.
+     */
     protected Logger getLog() {
         return log;
     }
 
-    private void cyclicRemoveNode(ConfigurationNode root, ConfigurationNode toRemove) {
+    private void cyclicRemoveNode(final ConfigurationNode root, final ConfigurationNode toRemove) {
         if (root.getChildren().contains(toRemove)) {
             root.removeChild(toRemove);
         } else {
