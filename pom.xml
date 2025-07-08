@@ -209,7 +209,7 @@
                 <repository>
                     <id>github</id>
                     <name>GitHub Packages</name>
-                    <url>https://maven.pkg.github.com/Netcracker/qubership-testing-platform-common-library</url>
+                    <url>https://maven.pkg.github.com/Netcracker/qubership-testing-platform-export-import-library</url>
                 </repository>
             </distributionManagement>
         </profile>
