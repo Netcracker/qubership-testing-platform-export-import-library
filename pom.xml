@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.qubership.atp.ei</groupId>
     <artifactId>qubership-atp-export-import-lib</artifactId>
-    <version>0.2.42-SNAPSHOT</version>
+    <version>0.2.43-SNAPSHOT</version>
     <modules>
         <module>qubership-atp-export-import-lib-distribution</module>
         <module>qubership-atp-export-import-lib-parent-java</module>
