@@ -27,7 +27,7 @@
         <micrometer.version>1.5.14</micrometer.version>
 
         <atp.integration.version>0.2.38</atp.integration.version>
-        <atp.auth.version>1.2.68</atp.auth.version>
+        <atp.auth.version>1.2.60</atp.auth.version>
         <atp.common.version>0.0.43</atp.common.version>
 
         <mapstruct.version>1.5.5.Final</mapstruct.version>
