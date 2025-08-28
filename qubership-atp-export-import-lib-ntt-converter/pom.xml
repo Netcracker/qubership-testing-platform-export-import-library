@@ -2,7 +2,7 @@
     <parent>
         <artifactId>qubership-atp-export-import-lib-parent-java</artifactId>
         <groupId>org.qubership.atp.ei</groupId>
-        <version>0.2.44-SNAPSHOT</version>
+        <version>0.2.44</version>
         <relativePath>../qubership-atp-export-import-lib-parent-java/pom.xml</relativePath>
     </parent>
     <name>qubership-atp-export-import-lib-ntt-converter</name>
