@@ -18,7 +18,7 @@ package org.qubership.atp.ei.ntt.converter;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.ei.ntt.model.enums.ModelItemType;
 
 public final class ConverterConstants {

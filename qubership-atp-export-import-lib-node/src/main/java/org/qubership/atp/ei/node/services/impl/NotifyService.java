@@ -16,6 +16,7 @@
 
 package org.qubership.atp.ei.node.services.impl;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.qubership.atp.ei.node.clients.ExportImportFeignClient;
 import org.qubership.atp.ei.node.constants.Constant;
 import org.qubership.atp.ei.node.dto.ExportImportReportRequest;
@@ -26,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
-import clover.org.apache.commons.lang3.exception.ExceptionUtils;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,25 +59,21 @@ public class NotifyService {
         } else {
             request.setStatus("COMPLETED");
         }
-
         notifyFlow(runNodeRequest, exportImportType, request);
     }
 
     private void notifyFlow(RunNodeRequest runNodeRequest, String exportImportType,
                             ExportImportReportRequest request) {
         log.info("Notify export service, project {}, process {}, task {}",
-                runNodeRequest.getProjectId(),
-                runNodeRequest.getProcessId(), runNodeRequest.getTaskId());
+                runNodeRequest.getProjectId(), runNodeRequest.getProcessId(), runNodeRequest.getTaskId());
         try {
             exportImportFeignClient.report(exportImportType, runNodeRequest.getProjectId(),
                     runNodeRequest.getProcessId(), runNodeRequest.getTaskId(), request);
         } catch (RestClientException | FeignException e) {
             log.error("Cannot notify export service about completeness runRequest {}, report {}", runNodeRequest,
-                    request,
-                    e);
+                    request, e);
             ExportException.throwException("Cannot notify export service about completeness runRequest {}, report {}",
-                    runNodeRequest, request,
-                    e);
+                    runNodeRequest, request, e);
         }
     }
 

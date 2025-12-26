@@ -18,7 +18,7 @@ package org.qubership.atp.ei.ntt.converter;
 
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.ei.ntt.Constants;
 import org.qubership.atp.ei.ntt.model.ModelItem;
 import org.qubership.atp.ei.ntt.model.Reference;
@@ -38,8 +38,8 @@ class TextAppender {
     private ModelItemType startingModelItemType;
     private ModelItemType currentModelItemType;
     private String modelItemIndent = StringUtils.EMPTY;
-    private ReadOnlyTextJsMapping mapping;
-    private ModelItemTextConverter converter;
+    private final ReadOnlyTextJsMapping mapping;
+    private final ModelItemTextConverter converter;
 
     TextAppender(ModelItemTextConverter converter, TextType type, ModelItemType modelItemType,
                  ReadOnlyTextJsMapping mapping) {
@@ -78,10 +78,7 @@ class TextAppender {
         if (isTemplatesTree) {
             textAppendMethod.append(modelItem, false);
         } else {
-            boolean isReference = false;
-            if (modelItem.isTemplate()) {
-                isReference = true;
-            }
+            boolean isReference = modelItem.isTemplate();
             textAppendMethod.append(modelItem, isReference);
         }
     }
@@ -111,7 +108,7 @@ class TextAppender {
         }
         final StringBuilder result = new StringBuilder("; flags=");
         for (String flag : flags) {
-            if (result.length() > 8) { // cuz "; flags=".length()
+            if (result.length() > 8) {
                 result.append(ConverterConstants.COMMA);
             }
             result.append(flag);
@@ -120,10 +117,7 @@ class TextAppender {
     }
 
     private String getModelState(ModelItem item) {
-        if (!item.isEnabled()) {
-            return ConverterConstants.COMMENT;
-        }
-        return StringUtils.EMPTY;
+        return item.isEnabled() ? StringUtils.EMPTY : ConverterConstants.COMMENT;
     }
 
     private TextAppendMethod appendToEditor = new TextAppendMethod() {

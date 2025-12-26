@@ -34,7 +34,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.ei.ntt.Constants;
 import org.qubership.atp.ei.ntt.ExportConverter;
 import org.qubership.atp.ei.ntt.controllers.DataSetController;
@@ -100,12 +100,12 @@ public class NttProjectConverter implements ExportConverter {
     private static final UUID DB_CONNECTION_ID = UUID.fromString("46ca25d6-058e-471a-9b5e-c13e4b481227");
     private static final UUID HTTP_CONNECTION_ID = UUID.fromString("2a0eab16-0fe7-4a12-8155-78c0c151abdf");
 
-    private static Map<String, String> macroRegexReplacement;
+    private static final Map<String, String> macroRegexReplacement;
 
     static {
         macroRegexReplacement = new HashMap<>();
-        macroRegexReplacement.put("\\$RAND\\(\'([0-9]*)\'\\)", "%RANDOM#$1%");
-        macroRegexReplacement.put("\\$DATE\\(\'(.*?)\'(, \'.*?\')?\\)", "%DATE#$1%");
+        macroRegexReplacement.put("\\$RAND\\('([0-9]*)'\\)", "%RANDOM#$1%");
+        macroRegexReplacement.put("\\$DATE\\('(.*?)'(, '.*?')?\\)", "%DATE#$1%");
         //action
         atp2NttFlagMaps.put(Constants.Flags.WARN_IF_FAIL_FLAG_NAME, Flag.WARN_IF_FAIL);
         //action/TR/ER
@@ -123,9 +123,9 @@ public class NttProjectConverter implements ExportConverter {
     private final WorkspaceModel nttWorkspaceModel;
     private final VariablesCompiler variablesCompiler;
 
-    private NttExportScope nttScopeMaps;
-    private Path modelLocationPath;
-    private Path rootForFiles;
+    private final NttExportScope nttScopeMaps;
+    private final Path modelLocationPath;
+    private final Path rootForFiles;
 
     /**
      * Instantiates a new Ntt project converter.
@@ -182,7 +182,6 @@ public class NttProjectConverter implements ExportConverter {
                             scopeItem1.setDependency(scopeItem2);
                         }
                     }
-
                     scope.setScopeItems(new ArrayList<>(testCase2ScopeItems.values()));
                 }
         );
@@ -202,8 +201,7 @@ public class NttProjectConverter implements ExportConverter {
             scopeSectionType = ScopeSectionType.VALIDATION;
         }
         scopeItem.setStage(scopeSectionType);
-        UUID testCaseId = atpTestCaseId;
-        testCase2ScopeItems.put(testCaseId, scopeItem);
+        testCase2ScopeItems.put(atpTestCaseId, scopeItem);
 
         HashSet<UUID> dependsOn = new HashSet<>();
         List<TestCaseDependency> atpDependsOn = loadObject(atpTestCaseId, TestCase.class).getDependsOn();
@@ -213,13 +211,12 @@ public class NttProjectConverter implements ExportConverter {
                     .filter(testCaseDependency -> testCaseDependency.getTestScopeId().equals(atpScopeId))
                     .forEach(testCaseDependency -> dependsOn.add(testCaseDependency.getTestCaseId()));
         }
-        dependenciesGraph.put(testCaseId, new HashSet<>(dependsOn));
+        dependenciesGraph.put(atpTestCaseId, new HashSet<>(dependsOn));
     }
 
     private ScopeItem buildScopeItem(UUID atpTestCaseId, NttTestCase testCase) {
         UUID dataSetId = loadObject(atpTestCaseId, TestCase.class).getDatasetUuid();
         org.qubership.atp.ei.ntt.model.DataSet dataSet = nttScopeMaps.getDataSet2NttDataSetMap().get(dataSetId);
-
         return new ScopeItemModel(testCase, dataSet);
     }
 
@@ -248,7 +245,7 @@ public class NttProjectConverter implements ExportConverter {
         log.debug("end exportTestCases()");
     }
 
-    private void extractFlagsForTestCases() throws Exception {
+    private void extractFlagsForTestCases() {
         log.debug("start extractFlagsForTestCases()");
         List<UUID> cases = getListOfObjects(TestCase.class);
         cases.forEach((testCaseId) -> {
@@ -256,7 +253,7 @@ public class NttProjectConverter implements ExportConverter {
             if (atpFlags != null) {
                 atpFlags.stream().forEach(testCaseFlags -> {
                     UUID scopeId = testCaseFlags.getTestScopeId();
-                    if (!nttScopeMaps.getNttTestSuite2atpTestScope().values().contains(scopeId)) {
+                    if (!nttScopeMaps.getNttTestSuite2atpTestScope().containsValue(scopeId)) {
                         return;
                     }
 
@@ -347,14 +344,13 @@ public class NttProjectConverter implements ExportConverter {
                 continue;
             }
 
-            if (MetaInfo.Type.ACTION == step.getType() || MetaInfo.Type.COMPOUND == step.getType()) {
-                for (String flag : flags) {
-                    nttTestStep.setFlag(flag);
-                }
-                flags.clear();
-            }
-
             if (nttTestStep != null) { // whatever but not flag and directive
+                if (MetaInfo.Type.ACTION == step.getType() || MetaInfo.Type.COMPOUND == step.getType()) {
+                    for (String flag : flags) {
+                        nttTestStep.setFlag(flag);
+                    }
+                    flags.clear();
+                }
                 nttTestSteps.add(nttTestStep);
             }
         }
@@ -380,16 +376,14 @@ public class NttProjectConverter implements ExportConverter {
     }
 
     private String getActionText(MetaInfo step) {
-        UUID actionId = step.getStepId();
-        Action action = loadObject(actionId, Action.class);
+        Action action = loadObject(step.getStepId(), Action.class);
         action.setParameters(step.getParameters());
         Action result = variablesCompiler.precompileStringParameters(action);
         return result.getName();
     }
 
     private String getCompoundText(MetaInfo step) {
-        UUID actionId = step.getStepId();
-        Compound compound = loadObject(actionId, Compound.class);
+        Compound compound = loadObject(step.getStepId(), Compound.class);
         Action action = new Action();
         action.setParameters(step.getParameters());
         action.setName(compound.getName());
@@ -421,11 +415,9 @@ public class NttProjectConverter implements ExportConverter {
     }
 
     private String convertUseDirectiveToActionSwitch(ArrayList<String> useDirectiveValues) {
-        String actionText = null;
-        if (useDirectiveValues != null && !useDirectiveValues.isEmpty()) {
-            actionText = String.format(NTT_ACTION_SWITCH_TO_SERVER, useDirectiveValues.get(0));
-        }
-        return actionText;
+        return useDirectiveValues != null && !useDirectiveValues.isEmpty()
+                ? String.format(NTT_ACTION_SWITCH_TO_SERVER, useDirectiveValues.get(0))
+                : null;
     }
 
     private List<TestAction> compounds(MetaInfo step, int level) {
@@ -491,14 +483,12 @@ public class NttProjectConverter implements ExportConverter {
                 }
             }
         }
-
         return directiveAction;
     }
 
-    private void createSuitesAndTestCases() throws Exception {
+    private void createSuitesAndTestCases() {
         log.debug("start createProjects()");
-        Map<UUID, List<UUID>> tastCaseToTestSuites = new HashMap<>();
-
+        Map<UUID, List<UUID>> testCaseToTestSuites = new HashMap<>();
         List<UUID> scopes = getListOfObjects(TestScope.class);
 
         scopes.forEach((testScopeId) -> {
@@ -506,19 +496,19 @@ public class NttProjectConverter implements ExportConverter {
             List<UUID> executionCases = nttTestScope.getExecutionCases();
             if (executionCases != null) {
                 executionCases.forEach(testCaseId ->
-                        tastCaseToTestSuites.computeIfAbsent(testCaseId, t -> new ArrayList<>()).add(testScopeId)
+                        testCaseToTestSuites.computeIfAbsent(testCaseId, t -> new ArrayList<>()).add(testScopeId)
                 );
             }
             List<UUID> validationCases = nttTestScope.getValidationCases();
             if (validationCases != null) {
                 validationCases.forEach(testCaseId ->
-                        tastCaseToTestSuites.computeIfAbsent(testCaseId, t -> new ArrayList<>()).add(testScopeId)
+                        testCaseToTestSuites.computeIfAbsent(testCaseId, t -> new ArrayList<>()).add(testScopeId)
                 );
             }
             List<UUID> prerequisitesCases = nttTestScope.getPrerequisitesCases();
             if (prerequisitesCases != null) {
                 prerequisitesCases.forEach(testCaseId ->
-                        tastCaseToTestSuites.computeIfAbsent(testCaseId, t -> new ArrayList<>()).add(testScopeId)
+                        testCaseToTestSuites.computeIfAbsent(testCaseId, t -> new ArrayList<>()).add(testScopeId)
                 );
             }
         });
@@ -535,7 +525,7 @@ public class NttProjectConverter implements ExportConverter {
 
                     List<TestSuite> nttTestSuites = project.getTestSuites();
                     // collect test suites
-                    List<UUID> testSuiteIds = tastCaseToTestSuites.get(testCaseId);
+                    List<UUID> testSuiteIds = testCaseToTestSuites.get(testCaseId);
 
                     Map<UUID, TestSuite> atp2NttSuitesMap = nttScopeMaps.getProject2NttSuitesMap()
                             .computeIfAbsent(atpDataSetListId, k -> new HashMap<>());
@@ -669,7 +659,7 @@ public class NttProjectConverter implements ExportConverter {
     }
 
     private DataSetAttribute getAttribute(UUID attrId) {
-        DataSetAttribute attribute = null;
+        DataSetAttribute attribute;
         try {
             attribute = loadObject(attrId, DataSetAttribute.class);
         } catch (Exception e) {
@@ -684,7 +674,7 @@ public class NttProjectConverter implements ExportConverter {
                 attrKeyName.append(rootAttribute.getName());
                 attrKeyName.append(".");
             });
-            attribute.setName(attrKeyName.toString() + attribute.getName());
+            attribute.setName(attrKeyName + attribute.getName());
         }
         return attribute;
     }
@@ -699,8 +689,7 @@ public class NttProjectConverter implements ExportConverter {
     }
 
     private <T extends Object> List<UUID> getListOfObjects(Class<T> clazz, UUID... parentIds) {
-        String folderName = clazz.getSimpleName();
-        Path dirWithObjects = getFolderWithObjects(folderName, parentIds);
+        Path dirWithObjects = getFolderWithObjects(clazz.getSimpleName(), parentIds);
         return getListOfObjectIdByFolder(dirWithObjects);
     }
 
@@ -777,7 +766,7 @@ public class NttProjectConverter implements ExportConverter {
         log.debug("end createProjects(.., .., ..)");
     }
 
-    private void createProjects() throws Exception {
+    private void createProjects() {
         List<UUID> dataSets = getListOfObjects(DataSet.class);
 
         for (UUID atpDataSetId : dataSets) {
@@ -816,8 +805,7 @@ public class NttProjectConverter implements ExportConverter {
         createProjects();
         insertVariablesInNttDataSets();
 
-        return new NttExportConverterResult(
-                new ArrayList<>(nttScopeMaps.getDataSetList2NttProjectMap().values()),
+        return new NttExportConverterResult(new ArrayList<>(nttScopeMaps.getDataSetList2NttProjectMap().values()),
                 null, null, false, modelLocationPath);
     }
 
@@ -857,7 +845,7 @@ public class NttProjectConverter implements ExportConverter {
      *
      * @return the ntt export converter result
      */
-    public NttExportConverterResult convertEnvironment(Map<UUID, String> categoryMap) throws Exception {
+    public NttExportConverterResult convertEnvironment(Map<UUID, String> categoryMap) {
         SettingsResource settingResource = new SettingsResource();
         nttScopeMaps.setNttEnvironments(settingResource);
 
@@ -866,8 +854,7 @@ public class NttProjectConverter implements ExportConverter {
         EnvironmentListsSectionDal envs = settingResource.getChild(EnvironmentListsSectionDal.class);
         EnvironmentItemLinksSectionDal envLinks = settingResource.getChild(EnvironmentItemLinksSectionDal.class);
 
-        List<UUID> listId = getListOfObjects(Environment.class);
-        for (UUID id : listId) {
+        for (UUID id : getListOfObjects(Environment.class)) {
             Environment atpEnv = loadObject(id, Environment.class);
 
             EnvironmentListDal env = new EnvironmentListDal();
@@ -922,7 +909,6 @@ public class NttProjectConverter implements ExportConverter {
                         server.setInstance(params.get("url"));
                         server.setUrl(params.get("url"));
                     }
-
                     server.setUnclassifiedServerParameters(connection.getParameters());
                 }
             }

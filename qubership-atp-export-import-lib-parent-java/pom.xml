@@ -14,7 +14,7 @@
         <spring.boot.version>2.7.18</spring.boot.version>
         <spring.cloud.version>2021.0.8</spring.cloud.version>
         <openclover.version>4.2.0</openclover.version>
-        <google.guava.version>32.0.0-jre</google.guava.version>
+        <google.guava.version>32.0.1-jre</google.guava.version>
         <mockito.all.version>1.9.5</mockito.all.version>
         <springdoc.version>1.7.0</springdoc.version>
         <apache.httpcomponents.version>4.5.5</apache.httpcomponents.version>
@@ -26,12 +26,13 @@
         <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
         <micrometer.version>1.5.14</micrometer.version>
         <ch.qos.logback.version>1.2.13</ch.qos.logback.version>
-        <tomcat-embed.version>9.0.99</tomcat-embed.version>
-        <undertow.version>2.2.36.Final</undertow.version>
+        <tomcat-embed.version>9.0.110</tomcat-embed.version>
+        <undertow.version>2.2.38.Final</undertow.version>
+        <bouncycastle.version>1.79</bouncycastle.version>
 
-        <atp.integration.version>0.2.38</atp.integration.version>
+        <atp.integration.version>0.2.42-SNAPSHOT</atp.integration.version>
         <atp.auth.version>1.2.75</atp.auth.version>
-        <atp.common.version>0.0.43</atp.common.version>
+        <atp.common.version>0.0.47</atp.common.version>
 
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.30</lombok.version>
@@ -77,6 +78,16 @@
                 <groupId>org.qubership.atp.auth</groupId>
                 <artifactId>atp-auth-models</artifactId>
                 <version>${atp.auth.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.qubership.atp</groupId>
@@ -88,11 +99,6 @@
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
                 <version>2.0.1.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openclover</groupId>
-                <artifactId>clover</artifactId>
-                <version>${openclover.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -173,13 +179,13 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.12.0</version>
+                <version>3.18.0</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>2.6</version>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
@@ -198,7 +204,7 @@
             <dependency>
                 <groupId>commons-configuration</groupId>
                 <artifactId>commons-configuration</artifactId>
-                <version>1.9</version>
+                <version>1.10</version>
             </dependency>
             <dependency>
                 <groupId>org.qubership.atp.common</groupId>
@@ -355,6 +361,46 @@
                         <groupId>commons-logging</groupId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-jwt</artifactId>
+                <version>1.1.1.RELEASE</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-rsa</artifactId>
+                <version>1.0.11.RELEASE</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcpkix-jdk15on</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

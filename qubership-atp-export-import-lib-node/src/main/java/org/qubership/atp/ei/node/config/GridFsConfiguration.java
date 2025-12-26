@@ -16,7 +16,7 @@
 
 package org.qubership.atp.ei.node.config;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.UuidRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -55,13 +55,12 @@ public class GridFsConfiguration {
      * To hide from Spring Mongo autoconfiguration GridFSTemplate.
      */
     @Bean
-    public GridFsProvider eiGridFsTemplate() throws ClassNotFoundException {
+    public GridFsProvider eiGridFsTemplate() {
         if (StringUtils.isEmpty(host)) {
             return new GridFsProvider(null);
         }
         String mongoClientUri = "mongodb://" + user + ":" + password
-                + "@" + host + ":" + Integer.parseInt(port) + "/?authSource"
-                + "=" + database;
+                + "@" + host + ":" + Integer.parseInt(port) + "/?authSource=" + database;
         MongoClient mongoClient = MongoClients.create(
                 MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(mongoClientUri))
@@ -73,8 +72,7 @@ public class GridFsConfiguration {
         MongoMappingContext mappingContext = new MongoMappingContext();
         mappingContext.setSimpleTypeHolder(SimpleTypeHolder.DEFAULT);
         mappingContext.afterPropertiesSet();
-        MappingMongoConverter mappingConverter = new MappingMongoConverter(dbRefResolver,
-                mappingContext);
+        MappingMongoConverter mappingConverter = new MappingMongoConverter(dbRefResolver, mappingContext);
         return new GridFsProvider(new GridFsTemplate(factory, mappingConverter));
     }
 

@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdom2.Attribute;
 import org.jdom2.CDATA;
@@ -47,11 +47,11 @@ import com.google.common.collect.Lists;
  */
 public class JDomOptionProcessor extends AbstractOptionProcessor<Element> {
 
-    private static final List<Class<?>> primitives = Lists.<Class<?>>newArrayList(String.class, boolean.class,
+    private static final List<Class<?>> primitives = Lists.newArrayList(String.class, boolean.class,
             Boolean.class, int.class, Integer.class,
             double.class, Double.class, float.class,
             Float.class, long.class, Long.class);
-    private Logger log = Logger.getLogger(JDomOptionProcessor.class);
+    private final Logger log = Logger.getLogger(JDomOptionProcessor.class);
 
     private void setFieldValue(Object object, Field field, Object value) {
         try {
@@ -97,11 +97,7 @@ public class JDomOptionProcessor extends AbstractOptionProcessor<Element> {
             return getTypedValue(node.getText(), field.getType());
         } else {
             Attribute attribute = XPathFactory.instance().compile(xpath, Filters.attribute()).evaluateFirst(source);
-            if (attribute != null) {
-                return getTypedValue(attribute.getValue(), field.getType());
-            } else {
-                return null;
-            }
+            return attribute == null ? null : getTypedValue(attribute.getValue(), field.getType());
         }
     }
 
@@ -149,9 +145,8 @@ public class JDomOptionProcessor extends AbstractOptionProcessor<Element> {
         while (!daoClass.getSuperclass().equals(Object.class)) {
             for (Field field : daoClass.getDeclaredFields()) {
                 if (field.getAnnotation(Option.class) != null) {
-                    Object value;
                     try {
-                        value = loadOption(field, source);
+                        Object value = loadOption(field, source);
                         if (value != null) {
                             setFieldValue(object, field, value);
                         }
@@ -159,9 +154,8 @@ public class JDomOptionProcessor extends AbstractOptionProcessor<Element> {
                         log.warn("Error loading option", e);
                     }
                 } else if (field.getAnnotation(Options.class) != null) {
-                    Object value;
                     try {
-                        value = loadOptions(field, source);
+                        Object value = loadOptions(field, source);
                         setFieldValue(object, field, value);
                     } catch (OptionProcessException e) {
                         log.warn("Error loading option", e);
@@ -224,7 +218,7 @@ public class JDomOptionProcessor extends AbstractOptionProcessor<Element> {
     }
 
     @Override
-    public void saveOption(Object object, Field field, Element source) throws OptionProcessException {
+    public void saveOption(Object object, Field field, Element source) {
         Object value = getFieldValue(object, field);
         if (value == null) {
             return;

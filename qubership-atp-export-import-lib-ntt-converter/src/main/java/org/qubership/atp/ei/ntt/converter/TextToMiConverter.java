@@ -17,11 +17,10 @@
 package org.qubership.atp.ei.ntt.converter;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.ei.ntt.controllers.ModelItemController;
 import org.qubership.atp.ei.ntt.model.ModelItem;
 import org.qubership.atp.ei.ntt.model.Reference;
@@ -32,15 +31,15 @@ import org.qubership.atp.ei.ntt.model.enums.ModelItemType;
 import org.qubership.atp.ei.ntt.utils.NttModelLoader;
 
 /**
- * The type Text to mi converter.
+ * The type Text to Model Item converter.
  *
  * @author Boris Kuznetsov
  * @since 29.07.2016
  */
 public class TextToMiConverter {
 
-    private static ModelItemController MIC = ModelItemController.getInstance();
-    private static NttModelLoader WSC = NttModelLoader.getInstance();
+    private static final ModelItemController MIC = ModelItemController.getInstance();
+    private static final NttModelLoader WSC = NttModelLoader.getInstance();
 
     private ModelItem parent;
     private int sizeDiff;
@@ -68,10 +67,7 @@ public class TextToMiConverter {
         if (!isTemplatesTree && !(parent instanceof Reference || parent.isTemplate())) {
             mayContainReference = true;
         }
-
-        appendMethod = parent instanceof TemplateProject
-                ? appendToTemplatesProj
-                : regularTree;
+        appendMethod = parent instanceof TemplateProject ? appendToTemplatesProj : regularTree;
     }
 
     /**
@@ -109,7 +105,7 @@ public class TextToMiConverter {
         }
         MIC.clear(parent);
         if (!children.isEmpty()) {
-            WSC.addNode(parent, children.toArray(new TreeNode[children.size()]));
+            WSC.addNode(parent, children.toArray(new TreeNode[0]));
             createScopeChanges();
         }
         if (appendMethod == appendToTemplatesProj) {
@@ -119,31 +115,24 @@ public class TextToMiConverter {
     }
 
     private void createScopeChanges() {
-        Iterator<TreeNode> mapIterator = ModelItemTextConverter.getChangesMapForScope().keySet().iterator();
-        while (mapIterator.hasNext()) {
-            if (((ModelItem) mapIterator.next()).getModelItemType().ordinal()
-                    >= children.get(0).getModelItemType().ordinal()) {
-                mapIterator.remove();
-            }
-        }
-        List<ScopeItem> items = WSC.getScope().getScopeItems();
-        for (ScopeItem item : items) {
+        int firstChildTypeOrdinal = children.get(0).getModelItemType().ordinal();
+        ModelItemTextConverter.getChangesMapForScope().keySet()
+                .removeIf(treeNode -> ((ModelItem) treeNode).getModelItemType().ordinal() >= firstChildTypeOrdinal);
+        for (ScopeItem item : WSC.getScope().getScopeItems()) {
             TreeNode parent = item.getModelItem();
             if (parent == null) {
                 continue;
             }
-            if (((ModelItem) parent).getModelItemType().ordinal() < children.get(0).getModelItemType().ordinal()) {
+            if (((ModelItem) parent).getModelItemType().ordinal() < firstChildTypeOrdinal) {
                 return;
             }
-
             List<String> path = new ArrayList<>();
             do {
                 path.add(parent.getName());
                 parent = parent.getParent();
-            } while (parent != null && ((ModelItem) parent).getModelItemType().ordinal()
-                    >= children.get(0).getModelItemType().ordinal());
+            } while (parent != null && ((ModelItem) parent).getModelItemType().ordinal() >= firstChildTypeOrdinal);
 
-            TreeNode found = getTnByPath(path, new ArrayList<TreeNode>(children));
+            TreeNode found = getTnByPath(path, new ArrayList<>(children));
             if (found != null) {
                 ModelItemTextConverter.getChangesMapForScope().put(item.getModelItem(), found);
             }
@@ -151,23 +140,20 @@ public class TextToMiConverter {
     }
 
     private TreeNode getTnByPath(List<String> path, List<TreeNode> where) {
-        for (int j = 0; j < where.size(); j++) {
-            TreeNode current = where.get(j);
+        for (TreeNode current : where) {
             if (current.getName().equals(path.get(path.size() - 1))) {
                 path.remove(path.size() - 1);
                 return path.isEmpty()
-                        ? where.get(j)
-                        : getTnByPath(path, where.get(j).getChildren());
+                        ? current
+                        : getTnByPath(path, current.getChildren());
             }
         }
         return null;
-
     }
 
     private String[] getFlags(String line) {
         Matcher m = ConverterConstants.FLAGS.matcher(line);
         String flags = StringUtils.EMPTY;
-
         if (m.matches()) {
             flags = m.group(2);
             line = m.group(1);
@@ -188,7 +174,6 @@ public class TextToMiConverter {
         if (flags.isEmpty()) {
             return;
         }
-
         for (String s : flags.split(ConverterConstants.COMMA)) {
             s = s.trim();
             if (!s.isEmpty()) {
@@ -241,11 +226,7 @@ public class TextToMiConverter {
 
         @Override
         public void addNode(ModelItemType modelItemType, ModelItem modelItem, boolean isTemplate, boolean isReference) {
-            int index = 0;
-            if (!isTemplate) {
-                index = modelItemType.ordinal() - structure[0].getModelItemType().ordinal();
-            }
-
+            int index = isTemplate ? 0 : modelItemType.ordinal() - structure[0].getModelItemType().ordinal();
             TextToMiConverter.this.addNode(modelItemType, modelItem, index);
         }
     };
@@ -324,14 +305,14 @@ public class TextToMiConverter {
             if (isReference) {
                 currentReference = modelItemType;
             } else if (currentReference != null && modelItemType.ordinal() <= currentReference.ordinal()) {
-                //reference no more in structur
+                //reference no more in the structure
                 currentReference = null;
             }
         }
 
         private boolean canItBeReference(ModelItemType miEnum) {
             if (currentReference != null) {
-                return miEnum.ordinal() <= currentReference.ordinal(); //will be added outside of currentReference
+                return miEnum.ordinal() <= currentReference.ordinal(); //will be added outside currentReference
             }
             return true;
         }

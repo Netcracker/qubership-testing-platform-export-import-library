@@ -31,8 +31,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
-import org.apache.commons.lang.ClassUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.qubership.atp.ei.ntt.settings.model.AdditionalOption;
 import org.qubership.atp.ei.ntt.settings.model.Option;
@@ -45,10 +45,10 @@ import com.google.common.collect.Lists;
 
 public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalConfiguration> {
 
-    private static final List<Class<?>> primitives = Lists.<Class<?>>newArrayList(String.class, boolean.class,
+    private static final List<Class<?>> primitives = Lists.newArrayList(String.class, boolean.class,
             Boolean.class, int.class, Integer.class, double.class,
             Double.class, float.class, Float.class, long.class, Long.class);
-    private Logger log = Logger.getLogger(ApacheOptionProcessor.class);
+    private final Logger log = Logger.getLogger(ApacheOptionProcessor.class);
 
     @Override
     public Object loadOption(final Field field, final HierarchicalConfiguration source) throws OptionProcessException {
@@ -78,13 +78,16 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
      */
     public Object loadUnclassifiedParameters(final Field field,
                                              final HierarchicalConfiguration source) throws OptionProcessException {
-        String additionalKey = field.getAnnotation(AdditionalOption.class).key();
-        Class<?> type = String.class;
-        Iterator<String> keys = source.getKeys(additionalKey);
         Map<String, String> unclassMap = new HashMap<>();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            unclassMap.put(key, (String) getProperty(type, key, source));
+        AdditionalOption additionalOption = field.getAnnotation(AdditionalOption.class);
+        if (additionalOption != null) {
+            String additionalKey = additionalOption.key();
+            Iterator<String> keys = source.getKeys(additionalKey);
+            Class<?> type = String.class;
+            while (keys.hasNext()) {
+                String key = keys.next();
+                unclassMap.put(key, (String) getProperty(type, key, source));
+            }
         }
         return unclassMap;
     }
@@ -132,30 +135,20 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
         Class<?> daoClass = object.getClass();
         while (!daoClass.getSuperclass().equals(Object.class)) {
             for (Field field : daoClass.getDeclaredFields()) {
-                if (field.getAnnotation(Option.class) != null) {
-                    Object value = null;
-                    try {
+                try {
+                    Object value;
+                    if (field.getAnnotation(Option.class) != null) {
                         value = loadOption(field, source);
                         setFieldValue(object, field, value);
-                    } catch (OptionProcessException e) {
-                        log.warn("Error loading option", e);
-                    }
-                } else if (field.getAnnotation(Options.class) != null) {
-                    Object value = null;
-                    try {
+                    } else if (field.getAnnotation(Options.class) != null) {
                         value = loadOptions(field, source);
                         setFieldValue(object, field, value);
-                    } catch (OptionProcessException e) {
-                        log.warn("Error loading option", e);
-                    }
-                } else if (field.getAnnotation(AdditionalOption.class) != null) {
-                    Object value = null;
-                    try {
+                    } else if (field.getAnnotation(AdditionalOption.class) != null) {
                         value = loadUnclassifiedParameters(field, source);
                         setFieldValue(object, field, value);
-                    } catch (OptionProcessException e) {
-                        log.warn("Error loading option", e);
                     }
+                } catch (OptionProcessException e) {
+                    log.warn("Error loading option", e);
                 }
             }
             daoClass = daoClass.getSuperclass();
