@@ -16,12 +16,12 @@
 
 package org.qubership.atp.ei.ntt.utils;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
+
+import org.apache.commons.collections.CollectionUtils;
 
 public class DependenceTransformer {
 
@@ -32,18 +32,15 @@ public class DependenceTransformer {
      * @return the map
      */
     public Map<UUID, UUID> transform(Map<UUID, HashSet<UUID>> sourceGraph) {
-
         Map<UUID, UUID> resultMap = new HashMap<>();
-
         for (UUID key : sourceGraph.keySet()) {
             HashSet<UUID> values = sourceGraph.get(key);
-            if (isNotEmpty(values)) {
+            if (CollectionUtils.isNotEmpty(values)) {
                 for (UUID value : values) {
                     updateMap(resultMap, key, value);
                 }
             }
         }
-
         return resultMap;
     }
 
@@ -52,12 +49,10 @@ public class DependenceTransformer {
             return;
         }
         if (resultMap.containsKey(key)) {
-            UUID key2 = value;
             UUID value2 = resultMap.get(key);
-            updateMap(resultMap, key2, value2);
+            updateMap(resultMap, value, value2);
         }
         resultMap.put(key, value);
     }
-
 
 }

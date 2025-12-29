@@ -16,12 +16,10 @@
 
 package org.qubership.atp.ei.node.services;
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -30,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -103,7 +102,7 @@ public class ObjectLoaderFromDiskServiceTest {
     }
 
     @Test
-    public void getListOfObjects_ShouldReturnMapFolderToMacroId_WhenInvokesWithCorrectFiles() throws IOException {
+    public void getListOfObjects_ShouldReturnMapFolderToMacroId_WhenInvokesWithCorrectFiles() {
         Map<UUID, Path> fileToMacroId = objectLoaderFromDiskService
                 .getListOfObjects(Paths.get("src/test/resources/ei/import/atp-macros"), "Macros", null);
 
@@ -116,7 +115,7 @@ public class ObjectLoaderFromDiskServiceTest {
     }
 
     @Test
-    public void getListOfObjects_resultIsEmpty_whenGetNonExistFolderWithObjects() throws IOException {
+    public void getListOfObjects_resultIsEmpty_whenGetNonExistFolderWithObjects() {
         Map<UUID, Path> result = objectLoaderFromDiskService.getListOfObjects(Paths.get(""), "Macros",
                 null);
         assertTrue(result.isEmpty());
@@ -148,6 +147,6 @@ public class ObjectLoaderFromDiskServiceTest {
                         "src/test/resources/ei/import/atp-catalogue/TestCase/0eddae84-fc29-4000-b4b1-bd704c848366.json");
         TestCase result = objectLoaderFromDiskService.loadFileAsObjectWithReplacementMap(path, TestCase.class, map);
         assertEquals(result.getUuid(), expectedId);
-        assertTrue(isEmpty(result.getLabelIds()));
+        assertTrue(CollectionUtils.isEmpty(result.getLabelIds()));
     }
 }

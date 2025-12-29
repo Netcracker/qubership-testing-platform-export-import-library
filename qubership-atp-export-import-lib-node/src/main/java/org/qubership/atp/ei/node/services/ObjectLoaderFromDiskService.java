@@ -16,8 +16,6 @@
 
 package org.qubership.atp.ei.node.services;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -33,6 +31,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.stereotype.Service;
 
@@ -321,7 +320,7 @@ public class ObjectLoaderFromDiskService {
         public Collection<Object> deserialize(JsonParser jp, DeserializationContext ctxt)
                 throws IOException {
             Collection<Object> col = super.deserialize(jp, ctxt);
-            if (isNotEmpty(col)) {
+            if (CollectionUtils.isNotEmpty(col)) {
                 col.removeIf(Objects::isNull);
             }
 
@@ -353,7 +352,7 @@ public class ObjectLoaderFromDiskService {
      *
      * @param workDir the work dir
      * @param clazz   the clazz
-     * @return the list of objects
+     * @return Map of UUID, Path pairs.
      */
     public Map<UUID, Path> getListOfObjects(Path workDir, Class clazz) {
         return getListOfObjects(workDir, clazz, (UUID) null);
@@ -364,7 +363,7 @@ public class ObjectLoaderFromDiskService {
      *
      * @param workDir the work dir
      * @param clazz   the clazz
-     * @return the list of objects
+     * @return Map of UUID, Path pairs.
      */
     public Map<UUID, Path> getListOfObjects(Path workDir, Class clazz, UUID parentId) {
         return getListOfObjects(workDir, clazz.getSimpleName(), parentId);
@@ -375,7 +374,7 @@ public class ObjectLoaderFromDiskService {
      *
      * @param workDir    the work dir
      * @param folderName the folder name
-     * @return the list of objects
+     * @return Map of UUID, Path pairs.
      */
     public Map<UUID, Path> getListOfObjects(Path workDir, String folderName) {
         return getListOfObjects(workDir, folderName, null);
@@ -386,7 +385,7 @@ public class ObjectLoaderFromDiskService {
      *
      * @param workDir    the work dir
      * @param folderName the folder name
-     * @return the list of objects
+     * @return Map of UUID, Path pairs.
      */
     public Map<UUID, Path> getListOfObjects(Path workDir, String folderName, UUID parentId) {
         Path dirWithObjects = workDir.resolve(folderName);
@@ -402,12 +401,12 @@ public class ObjectLoaderFromDiskService {
      * @param workDir   the work dir
      * @param clazz     the clazz
      * @param parentIds the parent ids
-     * @return the list of objects
+     * @return Map of UUID, Path pairs.
      */
     public Map<UUID, Path> getListOfObjects(Path workDir, Class clazz, List<UUID> parentIds) {
         log.debug("start getListOfObjects(workDir: {}, clazz: {}, parentIds: {})", workDir, clazz, parentIds);
         Map<UUID, Path> result = new LinkedHashMap<>();
-        if (isNotEmpty(parentIds)) {
+        if (CollectionUtils.isNotEmpty(parentIds)) {
             result.putAll(parentIds
                     .stream()
                     .flatMap(
