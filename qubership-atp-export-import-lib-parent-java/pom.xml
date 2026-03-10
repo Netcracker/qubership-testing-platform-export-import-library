@@ -26,11 +26,11 @@
         <micrometer.version>1.5.14</micrometer.version>
         <ch.qos.logback.version>1.2.13</ch.qos.logback.version>
         <tomcat-embed.version>9.0.110</tomcat-embed.version>
-        <undertow.version>2.2.38.Final</undertow.version>
+        <undertow.version>2.2.39.Final</undertow.version>
         <bouncycastle.version>1.79</bouncycastle.version>
 
         <atp.integration.version>0.2.42</atp.integration.version>
-        <atp.auth.version>1.2.75</atp.auth.version>
+        <atp.auth.version>1.2.80</atp.auth.version>
         <atp.common.version>0.0.47</atp.common.version>
 
         <mapstruct.version>1.5.5.Final</mapstruct.version>
