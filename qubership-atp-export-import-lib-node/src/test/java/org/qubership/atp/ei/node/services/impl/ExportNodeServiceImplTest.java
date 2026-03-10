@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,18 +20,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.qubership.atp.ei.node.ExportExecutor;
 import org.qubership.atp.ei.node.constants.Constant;
 import org.qubership.atp.ei.node.dto.ExportImportData;
@@ -39,14 +40,15 @@ import org.qubership.atp.ei.node.exceptions.ExportException;
 import org.qubership.atp.ei.node.services.ExportImportFilesService;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
 public class ExportNodeServiceImplTest extends AbstractConfigTest {
 
     private ExportExecutor exportExecutor;
     private ExportNodeServiceImpl exportNodeService;
     private ExportImportFilesService exportImportFilesService;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -69,13 +71,13 @@ public class ExportNodeServiceImplTest extends AbstractConfigTest {
 
         exportImportFilesService = new ExportImportFilesService(null, fileService) {
 
-            public String storeInGridFs(Path dir, String processId) throws IOException {
+            public String storeInGridFs(Path dir, String processId) {
                 return "randomObjectIdString";
             }
         };
 
         exportNodeService = new ExportNodeServiceImpl(threadPoolTaskExecutor, notifyService,
-                objectMapper, exportExecutor, tasksService, exportImportFilesService, fileService, metricsExportImportService );
+                objectMapper, exportExecutor, tasksService, exportImportFilesService, fileService, metricsExportImportService);
 
         ReflectionTestUtils.setField(exportNodeService, "applicationName", "Application_Name");
     }
@@ -86,33 +88,33 @@ public class ExportNodeServiceImplTest extends AbstractConfigTest {
         exportNodeService.runExport(request);
         Future<Object> task = tasksService.getTaskById(taskId);
 
-        Assert.assertNotNull(task);
+        Assertions.assertNotNull(task);
         Path result = (Path) task.get();
-        Assert.assertTrue(Files.exists(result));
+        Assertions.assertTrue(Files.exists(result));
 
         Thread.sleep(10 * 1000);
         task = tasksService.getTaskById(taskId);
-        Assert.assertNull(task);
+        Assertions.assertNull(task);
 
         Path exportFolder = fileService.getFolderPath(projectId, processId, Constant.EXPORT);
 
         Path workDir = exportFolder.resolve(implName);
-        Assert.assertFalse(Files.exists(workDir));
+        Assertions.assertFalse(Files.exists(workDir));
 
         Path unpDir = exportFolder.resolve("unzip_" + result.getFileName().toString());
         fileService.unpackZipFile(result, unpDir);
 
         Path result2 = unpDir.resolve(implName + ".zip");
-        Assert.assertTrue(Files.exists(result2));
+        Assertions.assertTrue(Files.exists(result2));
 
         Path result3 = unpDir.resolve(implName + ".json");
-        Assert.assertTrue(Files.exists(result3));
+        Assertions.assertTrue(Files.exists(result3));
 
         Path unpDir2 = unpDir.resolve("unzip_" + result2.getFileName().toString());
         fileService.unpackZipFile(result2, unpDir2);
 
         Path exportFileFromArchive = unpDir2.resolve(projectName).resolve(projectId.toString() + fileExt);
-        Assert.assertTrue(Files.exists(exportFileFromArchive));
+        Assertions.assertTrue(Files.exists(exportFileFromArchive));
     }
 
     @Test
@@ -128,7 +130,7 @@ public class ExportNodeServiceImplTest extends AbstractConfigTest {
     public void getExportPath() {
         UUID projectId = UUID.randomUUID();
         Path exportPath = fileService.getFolderPath(projectId, processId, Constant.EXPORT);
-        Assert.assertTrue(exportPath.toAbsolutePath().toString().lastIndexOf(processId) > 0);
-        Assert.assertTrue(exportPath.toAbsolutePath().toString().lastIndexOf(projectId.toString()) > 0);
+        Assertions.assertTrue(exportPath.toAbsolutePath().toString().lastIndexOf(processId) > 0);
+        Assertions.assertTrue(exportPath.toAbsolutePath().toString().lastIndexOf(projectId.toString()) > 0);
     }
 }

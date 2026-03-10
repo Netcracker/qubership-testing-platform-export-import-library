@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package org.qubership.atp.ei.node.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,24 +29,26 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.qubership.atp.ei.ntt.dto.TestCase;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
 public class ObjectLoaderFromDiskServiceTest {
 
     private ObjectLoaderFromDiskService objectLoaderFromDiskService;
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public File temporaryFolder;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         objectLoaderFromDiskService = new ObjectLoaderFromDiskService();
     }
@@ -55,7 +57,7 @@ public class ObjectLoaderFromDiskServiceTest {
     public void loadFileAsObject_shouldReturnMacro_WhenReadFromFilesystem() {
         Macros macroFromFile =
                 objectLoaderFromDiskService
-                        .loadFileAsObject(Paths.get("src/test/resources/ei/import/atp-macros"
+                        .loadFileAsObject(Path.of("src/test/resources/ei/import/atp-macros"
                                 + "/Macros/75a5c284-f86b-4edd-9343-3086732b5dad.json"), Macros.class);
 
         Macros macrosStandard = new Macros();
@@ -97,26 +99,26 @@ public class ObjectLoaderFromDiskServiceTest {
 
         macrosStandard.setParameters(parameters);
 
-        Assert.assertEquals("Macro from file should be equal to standard.", macrosStandard, macroFromFile);
+        Assertions.assertEquals(macrosStandard, macroFromFile, "Macro from file should be equal to standard.");
 
     }
 
     @Test
     public void getListOfObjects_ShouldReturnMapFolderToMacroId_WhenInvokesWithCorrectFiles() {
         Map<UUID, Path> fileToMacroId = objectLoaderFromDiskService
-                .getListOfObjects(Paths.get("src/test/resources/ei/import/atp-macros"), "Macros", null);
+                .getListOfObjects(Path.of("src/test/resources/ei/import/atp-macros"), "Macros", null);
 
         Map<UUID, Path> fileToMacroIdStandard = new HashMap<>();
         fileToMacroIdStandard.put(UUID.fromString("75a5c284-f86b-4edd-9343-3086732b5dad"),
-                Paths.get("src/test/resources/ei/import/atp-macros/Macros/75a5c284-f86b-4edd-9343-3086732b5dad"
+                Path.of("src/test/resources/ei/import/atp-macros/Macros/75a5c284-f86b-4edd-9343-3086732b5dad"
                         + ".json"));
 
-        assertEquals("Macro from file should be equal to standard.", fileToMacroIdStandard, fileToMacroId);
+        assertEquals(fileToMacroIdStandard, fileToMacroId, "Macro from file should be equal to standard.");
     }
 
     @Test
     public void getListOfObjects_resultIsEmpty_whenGetNonExistFolderWithObjects() {
-        Map<UUID, Path> result = objectLoaderFromDiskService.getListOfObjects(Paths.get(""), "Macros",
+        Map<UUID, Path> result = objectLoaderFromDiskService.getListOfObjects(Path.of(""), "Macros",
                 null);
         assertTrue(result.isEmpty());
     }
@@ -129,7 +131,7 @@ public class ObjectLoaderFromDiskServiceTest {
         map.put(initId, expectedId);
 
         Path path =
-                Paths.get("src/test/resources/ei/import/atp-macros/Macros/75a5c284-f86b-4edd-9343-3086732b5dad.json");
+                Path.of("src/test/resources/ei/import/atp-macros/Macros/75a5c284-f86b-4edd-9343-3086732b5dad.json");
         Macros result = objectLoaderFromDiskService.loadFileAsObjectWithReplacementMap(path, Macros.class, map);
         assertEquals(result.getUuid(), expectedId);
         assertNull(result.getModifiedBy());
@@ -143,7 +145,7 @@ public class ObjectLoaderFromDiskServiceTest {
         map.put(initId, expectedId);
 
         Path path =
-                Paths.get(
+                Path.of(
                         "src/test/resources/ei/import/atp-catalogue/TestCase/0eddae84-fc29-4000-b4b1-bd704c848366.json");
         TestCase result = objectLoaderFromDiskService.loadFileAsObjectWithReplacementMap(path, TestCase.class, map);
         assertEquals(result.getUuid(), expectedId);

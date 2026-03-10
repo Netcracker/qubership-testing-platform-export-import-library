@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,13 +20,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintWriter;
 
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.qubership.atp.ei.ntt.settings.ReflectionUtils;
 import org.qubership.atp.ei.ntt.settings.model.dal.Resource;
 
+import jakarta.annotation.Nullable;
 
 /**
  * TODO Make summary for this class.
@@ -50,8 +49,7 @@ public class XmlDaoFactory extends DaoFactory {
     public <T extends ElementDal> T load(Resource resource) {
 
         resource = loadResource((XmlResource) resource);
-        T element = get((XmlResource) resource);
-        return element;
+        return get((XmlResource) resource);
     }
 
     @Override
@@ -78,7 +76,7 @@ public class XmlDaoFactory extends DaoFactory {
     @SuppressWarnings("unchecked")
     public <T extends ElementDal> T get(XmlResource resource) {
 
-        return (T) get(resource, resource.getChildren().get(0).getClass());
+        return (T) get(resource, resource.getChildren().getFirst().getClass());
     }
 
     @Override
@@ -137,7 +135,7 @@ public class XmlDaoFactory extends DaoFactory {
                 reader.close();
 
                 PrintWriter out = new PrintWriter(resource.getFileSettings().getPathToSave());
-                out.print(sb.toString());
+                out.print(sb);
                 out.close();
             } catch (Exception ex) {
 

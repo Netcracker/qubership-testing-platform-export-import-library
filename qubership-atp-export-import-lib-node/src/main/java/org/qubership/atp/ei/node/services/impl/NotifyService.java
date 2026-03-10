@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.qubership.atp.ei.node.dto.ExportImportReportRequest;
 import org.qubership.atp.ei.node.dto.RunNodeRequest;
 import org.qubership.atp.ei.node.dto.ValidationResult;
 import org.qubership.atp.ei.node.exceptions.ExportException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
@@ -36,7 +35,6 @@ public class NotifyService {
 
     private final ExportImportFeignClient exportImportFeignClient;
 
-    @Autowired
     public NotifyService(ExportImportFeignClient exportImportFeignClient) {
         this.exportImportFeignClient = exportImportFeignClient;
     }

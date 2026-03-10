@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package org.qubership.atp.ei.ntt.scope;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "scope-configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -36,7 +36,7 @@ public class ScopeDao {
     private String description;
     @XmlElementWrapper(name = "scope")
     @XmlElement(name = "item")
-    private List<ScopeItemDao> scopeItems = new ArrayList<>();
+    private final List<ScopeItemDao> scopeItems = new ArrayList<>();
 
 
     public void setName(String name) {

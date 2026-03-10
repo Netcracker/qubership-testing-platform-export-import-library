@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,9 +20,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.qubership.atp.ei.ntt.settings.ReflectionUtils;
 import org.qubership.atp.ei.ntt.settings.model.FileSettings;
 import org.qubership.atp.ei.ntt.settings.model.Option;
@@ -31,6 +28,8 @@ import org.qubership.atp.ei.ntt.settings.model.dal.FiledStorer;
 import org.qubership.atp.ei.ntt.settings.model.dal.Resource;
 import org.qubership.atp.ei.ntt.settings.model.dal.jdom.JDomStorer;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * TODO Make summary for this class.
@@ -154,7 +153,7 @@ public abstract class DaoFactory {
             super(filePath);
         }
 
-        private JDomStorer domStorer = new JDomStorer(this);
+        private final JDomStorer domStorer = new JDomStorer(this);
 
         @Override
         public Associable getAssociable() {

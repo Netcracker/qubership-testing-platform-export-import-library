@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,14 +20,13 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-
 import org.qubership.atp.ei.ntt.model.Cloneable;
 import org.qubership.atp.ei.ntt.settings.model.AdditionalOption;
 import org.qubership.atp.ei.ntt.settings.model.Option;
 import org.qubership.atp.ei.ntt.settings.model.dal.support.DaoFactory;
 
 import com.google.common.base.Strings;
+import jakarta.annotation.Nonnull;
 
 /**
  * TODO Make summary for this class.

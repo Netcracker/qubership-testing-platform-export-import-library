@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.qubership.atp.ei.node.jobs;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.qubership.atp.common.lock.LockManager;
@@ -59,7 +59,7 @@ public class ExportImportFilesCleanerJob {
         log.info("Start cleaning old export-import files in folder {}", workDir);
         lockManager.executeWithLock("Cleaning up old export-import files", () -> {
             List<String> deletedPaths = fileService.removeAllOutdatedFilesAndFolders(
-                    Paths.get(workDir), expirationTimeMillis);
+                    Path.of(workDir), expirationTimeMillis);
             log.info("Cleaning old export-import files. Removed files and directories: {}", deletedPaths);
         });
         log.info("End cleaning old export-import files in folder {}", workDir);

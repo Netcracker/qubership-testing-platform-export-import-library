@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.ei.ntt.model.Scope;
 import org.qubership.atp.ei.ntt.model.ScopeItem;
 import org.qubership.atp.ei.ntt.model.enums.ScopeSectionType;
-
 
 /**
  * Scope implementation.
@@ -86,9 +85,8 @@ public class ScopeModel extends AbstractTreeNode implements Scope {
         List<ScopeItem> scopeValidation = new ArrayList<>();
 
         separateScopeItemsByScopeSection(scopeItems, scopePrerequisites, scopeActions, scopeValidation);
-        List<ScopeItem> renumberedScopeItems = resetNumbers(scopePrerequisites, scopeActions, scopeValidation);
 
-        return renumberedScopeItems;
+        return resetNumbers(scopePrerequisites, scopeActions, scopeValidation);
     }
 
 
@@ -115,10 +113,9 @@ public class ScopeModel extends AbstractTreeNode implements Scope {
 
     private int renumberItemsFromIndex(List<ScopeItem> scopeItems, Integer lastIndex) {
 
-        for (int index = 0; index < scopeItems.size(); index++) {
-            scopeItems.get(index).setNumber(++lastIndex);
+        for (ScopeItem scopeItem : scopeItems) {
+            scopeItem.setNumber(++lastIndex);
         }
-
         return lastIndex;
     }
 
@@ -191,7 +188,7 @@ public class ScopeModel extends AbstractTreeNode implements Scope {
 
             ScopeItem item = getScopeItems().get(i);
             String itemName = item.getName();
-            String newName = String.format("%d_%s", item.getNumber(), itemName.substring(itemName.indexOf('_') + 1));
+            String newName = "%d_%s".formatted(item.getNumber(), itemName.substring(itemName.indexOf('_') + 1));
             item.setName(newName);
         }
     }
@@ -238,7 +235,7 @@ public class ScopeModel extends AbstractTreeNode implements Scope {
                 break;
             }
         }
-        currentScopeItems.add(0, newItem);
+        currentScopeItems.addFirst(newItem);
         super.setChildren(currentScopeItems);
     }
 }

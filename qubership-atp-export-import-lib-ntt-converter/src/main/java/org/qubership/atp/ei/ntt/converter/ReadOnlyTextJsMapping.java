@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.qubership.atp.ei.ntt.converter;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * The type Read only text js mapping.
@@ -26,8 +26,8 @@ import javax.annotation.Nonnull;
  */
 public class ReadOnlyTextJsMapping {
 
-    private StringBuilder sb;
-    private JsRanges ranges;
+    private final StringBuilder sb;
+    private final JsRanges ranges;
     private boolean wasReadOnly;
     private int startRow;
     private int startCol;

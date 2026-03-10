@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,12 +16,15 @@
 
 package org.qubership.atp.ei.node.services.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
 
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.qubership.atp.ei.node.config.ExportImportNodeConfig;
 import org.qubership.atp.ei.node.dto.ExportFileDescriptor;
 import org.qubership.atp.ei.node.dto.ExportFormat;
@@ -35,6 +38,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@ExtendWith(MockitoExtension.class)
 abstract public class AbstractConfigTest {
     @Mock
     protected NotifyService notifyService;
@@ -43,8 +47,8 @@ abstract public class AbstractConfigTest {
     @Mock
     protected MetricsExportImportService metricsExportImportService;
     protected ExportImportFilesService exportImportFilesService;
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public File folder;
 
     protected final String implName = "Impl_Name";
     protected final String projectName = "Project";
@@ -69,7 +73,7 @@ abstract public class AbstractConfigTest {
         executor.initialize();
         threadPoolTaskExecutor = executor;
 
-        defaultWorkDir = folder.newFolder("test_folder_" + System.currentTimeMillis()).toPath();
+        defaultWorkDir = newFolder(folder, "test_folder_" + System.currentTimeMillis()).toPath();
         fileService.createDirectory(defaultWorkDir);
 
         tasksService = new TasksService();
@@ -90,5 +94,14 @@ abstract public class AbstractConfigTest {
         request.getFileDescriptor().setFileId("6167e6b746faf45620686d97");
 
         exportImportFilesService = new ExportImportFilesService(gridFsRepository, fileService);
+    }
+
+    private static File newFolder(File root, String... subDirs) throws IOException {
+        String subFolder = String.join("/", subDirs);
+        File result = new File(root, subFolder);
+        if (!result.mkdirs()) {
+            throw new IOException("Couldn't create folders " + root);
+        }
+        return result;
     }
 }

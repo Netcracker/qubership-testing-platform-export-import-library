@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -99,7 +99,7 @@ public class TemplateModel extends AbstractModelItem implements Template {
     @Override
     public String toString() {
 
-        return String.format("%s : %s", getPrefix(), item.getName());
+        return "%s : %s".formatted(getPrefix(), item.getName());
     }
 
 
@@ -125,7 +125,7 @@ public class TemplateModel extends AbstractModelItem implements Template {
         if (item == null) {
             return;
         }
-        String prefix = String.format("%s : ", getPrefix());
+        String prefix = "%s : ".formatted(getPrefix());
         if (name.startsWith(prefix)) {
             name = name.split("^" + prefix)[1];
         }

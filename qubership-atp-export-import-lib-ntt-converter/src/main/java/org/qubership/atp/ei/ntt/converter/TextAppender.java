@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -120,7 +120,7 @@ class TextAppender {
         return item.isEnabled() ? StringUtils.EMPTY : ConverterConstants.COMMENT;
     }
 
-    private TextAppendMethod appendToEditor = new TextAppendMethod() {
+    private final TextAppendMethod appendToEditor = new TextAppendMethod() {
 
         @Override
         public void append(ModelItem modelItem, boolean isReference) {
@@ -158,7 +158,7 @@ class TextAppender {
         }
     };
 
-    private TextAppendMethod appendToFile = new TextAppendMethod() {
+    private final TextAppendMethod appendToFile = new TextAppendMethod() {
 
         @Override
         public void append(ModelItem modelItem, boolean isReference) {
@@ -171,8 +171,8 @@ class TextAppender {
                 if (modelItem instanceof Template) {
                     tempModelItem = ConverterConstants.TEMPLATE_ + tempModelItem;
 
-                } else if (modelItem instanceof Reference) {
-                    tempModelItemName = ConverterConstants.TEMPLATE_ + getRefName((Reference) modelItem);
+                } else if (modelItem instanceof Reference reference) {
+                    tempModelItemName = ConverterConstants.TEMPLATE_ + getRefName(reference);
                     isReference = true; //not needed to save childs of reference in file;
                 }
                 mapping.append(tempModelItem); // ...+ ModelItemTypeName + ...

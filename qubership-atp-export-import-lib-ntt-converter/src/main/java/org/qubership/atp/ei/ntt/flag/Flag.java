@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -44,10 +44,10 @@ public class Flag implements Serializable {
     public static final String WARN_IF_FAIL = "Warn if fail";
     public static final String NEED_TO_REMOVE = "Need to remove this after complete";
 
-    private static List<String> customFlags = Collections.synchronizedList(new ArrayList<String>());
+    private static final List<String> customFlags = Collections.synchronizedList(new ArrayList<>());
 
-    private String name;
-    private Map<String, Option<?>> options = new HashMap<>();
+    private final String name;
+    private final Map<String, Option<?>> options = new HashMap<>();
     private boolean enabled;
 
     /**
@@ -82,11 +82,8 @@ public class Flag implements Serializable {
      * @param flag Flag for removing.
      */
     public static void removeCustomFlag(String flag) {
-
         synchronized (customFlags) {
-            if (customFlags.contains(flag)) {
-                customFlags.remove(flag);
-            }
+            customFlags.remove(flag);
         }
     }
 
@@ -94,7 +91,6 @@ public class Flag implements Serializable {
      * Removes all available custom flags.
      */
     public static void clearCustomFlags() {
-
         synchronized (customFlags) {
             customFlags.clear();
         }
@@ -235,7 +231,7 @@ public class Flag implements Serializable {
         if (options.isEmpty()) {
             return name;
         } else {
-            return String.format("%s %s", name, Arrays.toString(getOptions()));
+            return "%s %s".formatted(name, Arrays.toString(getOptions()));
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -31,19 +31,18 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.URLDecoder;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.google.common.base.Charsets;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * TODO Make summary for this class.
@@ -70,9 +69,9 @@ public final class FileUtils {
         try {
             return IOUtils.toString(new FileInputStream(path), Charsets.UTF_8);
         } catch (FileNotFoundException ex) {
-            log.error(String.format("Cannot find file [%s]", path), ex);
+            log.error("Cannot find file [%s]".formatted(path), ex);
         } catch (IOException ex) {
-            log.error(String.format("Cannot read file [%s]", path), ex);
+            log.error("Cannot read file [%s]".formatted(path), ex);
         }
         return StringUtils.EMPTY;
     }
@@ -87,11 +86,11 @@ public final class FileUtils {
         File file = new File(fileName);
         try {
             file.createNewFile();
-            PrintWriter out = new PrintWriter(file.getAbsoluteFile(), Charsets.UTF_8.name());
+            PrintWriter out = new PrintWriter(file.getAbsoluteFile(), Charsets.UTF_8);
             out.print(text);
             out.close();
         } catch (IOException e) {
-            log.error(String.format("Cannot write text file [%s]", fileName), e);
+            log.error("Cannot write text file [%s]".formatted(fileName), e);
         }
     }
 
@@ -107,7 +106,7 @@ public final class FileUtils {
             String canonicalPath = file.getCanonicalPath();
             return canonicalPath.replace(File.separator, "/");
         } catch (IOException e) {
-            log.error(String.format("Can not get canonical path for the [%s]", file.getPath()), e);
+            log.error("Can not get canonical path for the [%s]".formatted(file.getPath()), e);
             return file.getAbsolutePath();
         }
     }
@@ -132,7 +131,7 @@ public final class FileUtils {
                     ? filePath.replace(appDirPath, ".").replace(File.separator, "/")
                     : filePath;
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Can not do [%s] path to relate to [%s]", file, appDir), e);
+            throw new RuntimeException("Can not do [%s] path to relate to [%s]".formatted(file, appDir), e);
         }
     }
 
@@ -148,7 +147,7 @@ public final class FileUtils {
             log.info("Start deleting files " + Arrays.toString(files));
             for (String file : files) {
                 try {
-                    deleteDirectory(new File(Paths.get(rootDirectory, file).toUri()));
+                    deleteDirectory(new File(Path.of(rootDirectory, file).toUri()));
                 } catch (IOException e) {
                     log.error("Failed delete file: " + file);
                 }
@@ -170,7 +169,7 @@ public final class FileUtils {
             return !file.isAbsolute() && file.getCanonicalPath().startsWith(CermFileSystem.APP_DIR.getCanonicalPath());
         } catch (IOException e) {
             throw new RuntimeException(
-                    String.format("Can not check if [%s] path relates to application directory", filePath), e);
+                    "Can not check if [%s] path relates to application directory".formatted(filePath), e);
         }
     }
 
@@ -186,7 +185,7 @@ public final class FileUtils {
         try {
             return concat.getCanonicalPath();
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Can not get canonical path of [%s]", concat), e);
+            throw new RuntimeException("Can not get canonical path of [%s]".formatted(concat), e);
         }
     }
 
@@ -199,9 +198,9 @@ public final class FileUtils {
     @Nonnull
     public static String getParentFolder(@Nonnull final File file) {
         try {
-            return URLDecoder.decode(file.getParentFile().getCanonicalPath(), Charsets.UTF_8.name());
+            return URLDecoder.decode(file.getParentFile().getCanonicalPath(), Charsets.UTF_8);
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Cannot get canonical path for [%s]", file), e);
+            throw new RuntimeException("Cannot get canonical path for [%s]".formatted(file), e);
         }
     }
 
@@ -217,7 +216,7 @@ public final class FileUtils {
         try {
             file.createNewFile();
         } catch (IOException e) {
-            log.error(String.format("Cannot create new file [%s]", file.getName()), e);
+            log.error("Cannot create new file [%s]".formatted(file.getName()), e);
         }
     }
 
@@ -235,7 +234,7 @@ public final class FileUtils {
         try {
             return org.apache.commons.io.FileUtils.readLines(file, Charsets.UTF_8);
         } catch (IOException e) {
-            log.error(String.format("Cannot read lines from file [%s]", file.getAbsolutePath()), e);
+            log.error("Cannot read lines from file [%s]".formatted(file.getAbsolutePath()), e);
         }
         return Collections.emptyList();
     }
@@ -263,15 +262,15 @@ public final class FileUtils {
         } else {
             file.delete();
         }
-        trace(String.format("Try to write object [%s] to file [%s]", obj, file.getPath()));
+        trace("Try to write object [%s] to file [%s]".formatted(obj, file.getPath()));
         try (ObjectOutputStream oStream = new ObjectOutputStream(new FileOutputStream(file))) {
             oStream.writeObject(obj);
             oStream.flush();
-            trace(String.format("Object [%s] was successfully write to file [%s]", obj, file.getPath()));
+            trace("Object [%s] was successfully write to file [%s]".formatted(obj, file.getPath()));
         } catch (FileNotFoundException e) {
-            log.error(String.format("Cannot find file [%s]", file.getAbsolutePath()), e);
+            log.error("Cannot find file [%s]".formatted(file.getAbsolutePath()), e);
         } catch (IOException e) {
-            log.error(String.format("Cannot store object in [%s]", file.getAbsolutePath()), e);
+            log.error("Cannot store object in [%s]".formatted(file.getAbsolutePath()), e);
         }
     }
 
@@ -285,14 +284,14 @@ public final class FileUtils {
     public static Serializable loadObject(@Nonnull final String fileName) {
         File file = new File(fileName);
         if (!file.exists()) {
-            log.error(String.format("The file [%s] wasn't found. Please check the name.", file.getPath()));
+            log.error("The file [%s] wasn't found. Please check the name.".formatted(file.getPath()));
             return null;
         }
-        trace(String.format("Try to read object from file [%s]", file.getPath()));
+        trace("Try to read object from file [%s]".formatted(file.getPath()));
         Object obj = null;
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             obj = ois.readObject();
-            trace(String.format("Object [%s] was successfully read from file [%s]", obj, file.getPath()));
+            trace("Object [%s] was successfully read from file [%s]".formatted(obj, file.getPath()));
         } catch (ClassNotFoundException e) {
             log.error("ClassNotFoundException", e);
         } catch (FileNotFoundException e) {
@@ -312,7 +311,7 @@ public final class FileUtils {
             InputStream inStream = org.apache.commons.io.FileUtils.openInputStream(file);
             return new BufferedReader(new InputStreamReader(inStream, Charsets.UTF_8));
         } catch (Exception e) {
-            log.error(String.format("Cannot create reader stream for [%s]", file.getAbsolutePath()), e);
+            log.error("Cannot create reader stream for [%s]".formatted(file.getAbsolutePath()), e);
         }
         return null;
     }

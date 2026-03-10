@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -19,15 +19,14 @@ package org.qubership.atp.ei.ntt.settings.model.dal.settings;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.ei.ntt.settings.model.Option;
 import org.qubership.atp.ei.ntt.settings.model.Options;
 import org.qubership.atp.ei.ntt.settings.model.dal.support.DaoFactory;
 
 import com.google.common.base.Strings;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * TODO Make summary for this class.
@@ -38,13 +37,13 @@ public class ServersSettingsDal extends DaoFactory.AbstractElementDal {
     private String currentServerAlias;
 
     @Options(key = "serversSettings.server", parent = "serversSettings", listClass = ServerDal.class)
-    private List<ServerDal> serverList = new ArrayList<>();
+    private final List<ServerDal> serverList = new ArrayList<>();
 
     public String getCurrentServerAlias() {
 
         return currentServerAlias != null
                 ? currentServerAlias
-                : serverList.size() > 0 ? serverList.get(0).getAlias() : StringUtils.EMPTY;
+                : !serverList.isEmpty() ? serverList.getFirst().getAlias() : StringUtils.EMPTY;
     }
 
     /**
@@ -58,7 +57,7 @@ public class ServersSettingsDal extends DaoFactory.AbstractElementDal {
                 return Strings.nullToEmpty(srv.getUrl());
             }
         }
-        return Strings.nullToEmpty(serverList.get(0).getUrl());
+        return Strings.nullToEmpty(serverList.getFirst().getUrl());
     }
 
     public void setCurrentServerAlias(String currentServerAlias) {

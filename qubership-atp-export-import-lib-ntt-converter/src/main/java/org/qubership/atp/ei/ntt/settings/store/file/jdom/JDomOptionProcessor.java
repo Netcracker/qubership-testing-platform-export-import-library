@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -105,17 +105,17 @@ public class JDomOptionProcessor extends AbstractOptionProcessor<Element> {
     public Object loadOptions(Field field, Element source) throws OptionProcessException {
         String xpath = field.getAnnotation(Options.class).key();
         Type fieldGenericType = field.getGenericType();
-        if (fieldGenericType instanceof ParameterizedType) {
-            Class<?> fieldClass = (Class<?>) ((ParameterizedType) fieldGenericType).getRawType();
-            Type fieldTypeParameter = ((ParameterizedType) fieldGenericType).getActualTypeArguments()[0];
+        if (fieldGenericType instanceof ParameterizedType type1) {
+            Class<?> fieldClass = (Class<?>) type1.getRawType();
+            Type fieldTypeParameter = type1.getActualTypeArguments()[0];
             if (Collection.class.isAssignableFrom(fieldClass)) {
                 List<Element> possibleChilds = XPathFactory.instance()
                         .compile(xpath, Filters.element())
                         .evaluate(source);
                 List<Object> values = Lists.newArrayListWithCapacity(possibleChilds.size() + 5);
                 Class<?> collectionClass;
-                if (fieldTypeParameter instanceof ParameterizedType) {
-                    collectionClass = (Class<?>) ((ParameterizedType) fieldTypeParameter).getRawType();
+                if (fieldTypeParameter instanceof ParameterizedType type) {
+                    collectionClass = (Class<?>) type.getRawType();
                 } else {
                     collectionClass = (Class<?>) fieldTypeParameter;
                 }
@@ -132,10 +132,10 @@ public class JDomOptionProcessor extends AbstractOptionProcessor<Element> {
                 }
                 return values;
             } else {
-                throw new OptionProcessException(String.format("Unsupported raw type: %s", fieldClass));
+                throw new OptionProcessException("Unsupported raw type: %s".formatted(fieldClass));
             }
         } else {
-            throw new OptionProcessException(String.format("Unknown field type: %s", fieldGenericType));
+            throw new OptionProcessException("Unknown field type: %s".formatted(fieldGenericType));
         }
     }
 
@@ -170,20 +170,20 @@ public class JDomOptionProcessor extends AbstractOptionProcessor<Element> {
     @Override
     public void save(Object object, Element source) {
         for (int i = 0, len = source.getAttributes().size(); i < len; i++) {
-            source.removeAttribute(source.getAttributes().get(0));
+            source.removeAttribute(source.getAttributes().getFirst());
         }
         super.save(object, source);
     }
 
     private void setValue(Object element, Object value, boolean cdata) {
-        if (element instanceof Element) {
+        if (element instanceof Element element1) {
             if (cdata) {
-                ((Element) element).setContent(new CDATA(Objects.toString(value, StringUtils.EMPTY)));
+                element1.setContent(new CDATA(Objects.toString(value, StringUtils.EMPTY)));
             } else {
-                ((Element) element).setContent(new Text(Objects.toString(value, StringUtils.EMPTY)));
+                element1.setContent(new Text(Objects.toString(value, StringUtils.EMPTY)));
             }
-        } else if (element instanceof Attribute) {
-            ((Attribute) element).setValue(Objects.toString(value, StringUtils.EMPTY));
+        } else if (element instanceof Attribute attribute) {
+            attribute.setValue(Objects.toString(value, StringUtils.EMPTY));
         }
     }
 
@@ -252,7 +252,7 @@ public class JDomOptionProcessor extends AbstractOptionProcessor<Element> {
         int i = 0;
         for (; i < toIterate.size(); i++) {
             if (existingChildren.size() < i + 1) {
-                String newXpath = String.format("%s[%s]", xpath, i + 1);
+                String newXpath = "%s[%s]".formatted(xpath, i + 1);
                 buildHierarchy(source, newXpath);
                 existingChildren = XPathFactory.instance().compile(xpath, Filters.element()).evaluate(source);
             }

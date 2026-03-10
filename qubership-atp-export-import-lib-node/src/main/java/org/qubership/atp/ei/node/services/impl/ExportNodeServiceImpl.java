@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.qubership.atp.ei.node.services.FileService;
 import org.qubership.atp.ei.node.services.MetricsExportImportService;
 import org.qubership.atp.integration.configuration.mdc.MdcUtils;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -55,7 +54,7 @@ public class ExportNodeServiceImpl implements ExportNodeService {
     private final ExportImportFilesService exportImportFilesService;
     private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
     private final FileService fileService;
-    private Map<String, String> mdcContext;
+    private final Map<String, String> mdcContext;
     private final MetricsExportImportService metricsExportImportService;
 
     /**
@@ -65,7 +64,6 @@ public class ExportNodeServiceImpl implements ExportNodeService {
      * @param objectMapper   the object mapper
      * @param exportExecutor the export executor
      */
-    @Autowired
     public ExportNodeServiceImpl(@Qualifier("atpExportThreadExecutor") ThreadPoolTaskExecutor threadPoolTaskExecutor,
                                  NotifyService notifyService,
                                  ObjectMapper objectMapper,

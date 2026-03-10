@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -25,13 +25,11 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -88,7 +86,7 @@ public class FileService {
     public void copyPath(Path dir, Path dest) throws ExportException {
         Assert.notNull(dir, "Argument dir is null");
         Assert.notNull(dest, "Argument dest is null");
-        log.debug("copy path {} to {}", dir.toString(), dest.toString());
+        log.debug("copy path {} to {}", dir, dest);
         try {
             FileSystemUtils.copyRecursively(dir, dest);
         } catch (IOException e) {
@@ -120,13 +118,13 @@ public class FileService {
      */
     public Path createDirectory(Path dir) throws ExportException {
         Assert.notNull(dir, "Argument dir is null");
-        log.debug("create dir {}", dir.toString());
+        log.debug("create dir {}", dir);
         try {
             if (!Files.exists(dir)) {
                 Files.createDirectories(dir);
             }
         } catch (IOException e) {
-            log.error("Cannot create dir {} ", dir.toString(), e);
+            log.error("Cannot create dir {} ", dir, e);
             ExportException.throwException("Cannot create dir {} ", dir.toString(), e);
         }
         return dir;
@@ -155,13 +153,13 @@ public class FileService {
      */
     public Path createFile(Path file) throws ExportException {
         Assert.notNull(file, "Argument file is null");
-        log.debug("create file {}", file.toString());
+        log.debug("create file {}", file);
         try {
             if (!Files.exists(file)) {
                 Files.createFile(file);
             }
         } catch (IOException e) {
-            log.error("Cannot create dir {} ", file.toString(), e);
+            log.error("Cannot create dir {} ", file, e);
             ExportException.throwException("Cannot create dir {} ", file.toString(), e);
         }
         return file;
@@ -176,21 +174,21 @@ public class FileService {
      */
     public Path packDirectory(Path dirToZip) throws ExportException {
         Assert.notNull(dirToZip, "Argument dirToZip is null");
-        log.debug("pack dir {}", dirToZip.toString());
+        log.debug("pack dir {}", dirToZip);
         Path parentDir = dirToZip.getParent();
         String archiveFileName = dirToZip.getFileName().toString();
 
-        Path archiveFile = Paths.get(parentDir.toAbsolutePath().toString(), archiveFileName + ".zip");
+        Path archiveFile = Path.of(parentDir.toAbsolutePath().toString(), archiveFileName + ".zip");
         deletePath(archiveFile);
 
         try (OutputStream fos = Files.newOutputStream(archiveFile);
              ZipOutputStream zipOut = new ZipOutputStream(fos)) {
 
-            Files.walkFileTree(dirToZip, new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(dirToZip, new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     if (!dirToZip.equals(dir)) {
-                        zipOut.putNextEntry(new ZipEntry(dirToZip.relativize(dir).toString() + "/"));
+                        zipOut.putNextEntry(new ZipEntry(dirToZip.relativize(dir) + "/"));
                         zipOut.closeEntry();
                     }
 
@@ -242,7 +240,7 @@ public class FileService {
     public Path unpackZipFile(Path zipFile, Path dest) throws ExportException {
         Assert.notNull(zipFile, "Argument zipFile is null");
         Assert.notNull(dest, "Argument dest is null");
-        log.debug("unpack zip {} in {}", zipFile.toString(), dest.toString());
+        log.debug("unpack zip {} in {}", zipFile, dest);
         if (!Files.exists(dest)) {
             createDirectory(dest);
         }
@@ -276,7 +274,7 @@ public class FileService {
      * Get path to root folder for export or import.
      */
     public Path getFolderPath(UUID projectId, String taskId, String exportOrImportFolderName) {
-        return Paths.get(ExportImportNodeConfig.DEFAULT_WORK_DIR)
+        return Path.of(ExportImportNodeConfig.DEFAULT_WORK_DIR)
                 .resolve(projectId.toString())
                 .resolve(exportOrImportFolderName)
                 .resolve(taskId);
@@ -325,7 +323,7 @@ public class FileService {
         try (Stream<Path> files = Files.find(workDir, 1,
                 (path, basicFileAttributes) -> basicFileAttributes.isRegularFile()
                         && path.getFileName().toString().contains(".zip"))) {
-            archives.addAll(files.collect(Collectors.toList()));
+            archives.addAll(files.toList());
         } catch (IOException e) {
             log.error("Cannot find export files in dir {}", workDir, e);
             ExportException.throwException("Cannot find export files in dir {}", workDir, e);
@@ -350,7 +348,7 @@ public class FileService {
             return deletedPaths;
         }
         try {
-            Files.walkFileTree(workDir, new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(workDir, new SimpleFileVisitor<>() {
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {

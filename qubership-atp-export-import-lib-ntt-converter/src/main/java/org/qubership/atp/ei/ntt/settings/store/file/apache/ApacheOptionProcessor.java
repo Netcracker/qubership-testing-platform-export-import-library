@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -63,12 +63,12 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
         String shortCanonicalName = ClassUtils.getShortCanonicalName(type);
         try {
             Method method = source.getClass()
-                                  .getMethod(String.format("get%s", StringUtils.capitalize(shortCanonicalName)),
+                                  .getMethod("get%s".formatted(StringUtils.capitalize(shortCanonicalName)),
                                              String.class);
             return method.invoke(source, key);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            throw new OptionProcessException(e instanceof InvocationTargetException
-                                             ? ((InvocationTargetException) e).getTargetException()
+            throw new OptionProcessException(e instanceof InvocationTargetException ite
+                                             ? ite.getTargetException()
                                              : e);
         }
     }
@@ -96,19 +96,19 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
     public Object loadOptions(final Field field, final HierarchicalConfiguration source) throws OptionProcessException {
         String key = field.getAnnotation(Options.class).key();
         Type fieldGenericType = field.getGenericType();
-        if (fieldGenericType instanceof ParameterizedType) {
-            Class<?> fieldClass = (Class<?>) ((ParameterizedType) fieldGenericType).getRawType();
-            Type fieldTypeParameter = ((ParameterizedType) fieldGenericType).getActualTypeArguments()[0];
+        if (fieldGenericType instanceof ParameterizedType type1) {
+            Class<?> fieldClass = (Class<?>) type1.getRawType();
+            Type fieldTypeParameter = type1.getActualTypeArguments()[0];
             if (Collection.class.isAssignableFrom(fieldClass)) {
                 List<Object> values = Lists.newArrayListWithCapacity(source.getMaxIndex(key) + 5);
                 Class<?> collectionClass;
-                if (fieldTypeParameter instanceof ParameterizedType) {
-                    collectionClass = (Class<?>) ((ParameterizedType) fieldTypeParameter).getRawType();
+                if (fieldTypeParameter instanceof ParameterizedType type) {
+                    collectionClass = (Class<?>) type.getRawType();
                 } else {
                     collectionClass = (Class<?>) fieldTypeParameter;
                 }
                 for (int i = 0; i < source.getMaxIndex(key) + 1; i++) {
-                    String newKey = String.format("%s(%s)", key, i);
+                    String newKey = "%s(%s)".formatted(key, i);
                     HierarchicalConfiguration configuration = source.configurationAt(newKey);
                     if (primitives.contains(collectionClass)) {
                         values.add(getProperty(collectionClass, newKey, source));
@@ -122,10 +122,10 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
                 }
                 return values;
             } else {
-                throw new OptionProcessException(String.format("Unsupported raw type: %s", fieldClass));
+                throw new OptionProcessException("Unsupported raw type: %s".formatted(fieldClass));
             }
         } else {
-            throw new OptionProcessException(String.format("Unknown field type: %s", fieldGenericType));
+            throw new OptionProcessException("Unknown field type: %s".formatted(fieldGenericType));
         }
     }
 
@@ -214,7 +214,7 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
                     source.getRootNode().addChild(new HierarchicalConfiguration.Node(key));
                 }
             }
-            String newKey = String.format("%s(%s)", key, i);
+            String newKey = "%s(%s)".formatted(key, i);
             try {
                 HierarchicalConfiguration configuration = source.configurationAt(newKey);
                 if (primitives.contains(collectionClass)) {
@@ -228,7 +228,7 @@ public class ApacheOptionProcessor extends AbstractOptionProcessor<HierarchicalC
         }
         //yeah, clear garbage
         while (source.getMaxIndex(key) >= toIterate.size()) {
-            String newKey = String.format("%s(%s)", key, source.getMaxIndex(key));
+            String newKey = "%s(%s)".formatted(key, source.getMaxIndex(key));
             ConfigurationNode rootNode = source.configurationAt(newKey).getRootNode();
             cyclicRemoveNode(source.getRootNode(), rootNode);
         }

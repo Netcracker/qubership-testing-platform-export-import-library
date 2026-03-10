@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.qubership.atp.ei.ntt.model.TreeNode;
 public abstract class AbstractTreeNodeController {
 
     public static final TreeNodeFactory DEFAULT_FACTORY = DefaultTreeNodeFactory.INSTANCE;
-    private TreeNodeFactoryDetector factoryDetector = new DefaultTreeNodeFactoryDetector();
+    private final TreeNodeFactoryDetector factoryDetector = new DefaultTreeNodeFactoryDetector();
 
 
     public void clear(TreeNode item, Object... helpArgs) {
@@ -45,8 +45,8 @@ public abstract class AbstractTreeNodeController {
             if (parent != null) {
                 List<TreeNode> childs = parent.getChildren();
                 Vector<Integer> itemsForRemove = new Vector<>(1, 1);
-                for (int i = 0; i < item.length; i++) {
-                    int index = childs.indexOf(item[i]);
+                for (TreeNode treeNode : item) {
+                    int index = childs.indexOf(treeNode);
                     if (index != -1) {
                         itemsForRemove.add(index);
                     }
