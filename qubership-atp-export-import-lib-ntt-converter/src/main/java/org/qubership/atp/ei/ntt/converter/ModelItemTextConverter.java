@@ -75,8 +75,8 @@ public class ModelItemTextConverter {
             parent = parent.getTemplate();
         }
 
-        if (parent instanceof Template) {
-            parent = ((Template) parent).getModelItem();
+        if (parent instanceof Template template) {
+            parent = template.getModelItem();
         }
 
         TextToMiConverter converter = new TextToMiConverter(this, parent, isTemplatesTree);

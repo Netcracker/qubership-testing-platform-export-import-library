@@ -105,8 +105,8 @@ public class ModelItemController extends AbstractTreeNodeController {
      * @return the default child prefix
      */
     public String getDefaultChildPrefix(TreeNode parent) {
-        if (parent instanceof ModelItem) {
-            return ((ModelItem) parent).getModelItemType().next().getName();
+        if (parent instanceof ModelItem item) {
+            return item.getModelItemType().next().getName();
         }
         return null;
     }

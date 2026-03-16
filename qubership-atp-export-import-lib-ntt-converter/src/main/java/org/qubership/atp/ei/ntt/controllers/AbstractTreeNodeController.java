@@ -92,8 +92,8 @@ public abstract class AbstractTreeNodeController {
     public void add(TreeNode parent, TreeNode[] child, Object... helpArgs) {
 
         int offset;
-        if (helpArgs != null && helpArgs.length > 0 && helpArgs[0] instanceof Integer) {
-            offset = (Integer) helpArgs[0];
+        if (helpArgs != null && helpArgs.length > 0 && helpArgs[0] instanceof Integer integer) {
+            offset = integer;
         } else {
             offset = parent.getChildren().size();
         }

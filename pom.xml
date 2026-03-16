@@ -44,7 +44,7 @@
         <developerConnection>scm:git:https://github.com/Netcracker/qubership-testing-platform-export-import-library.git</developerConnection>
         <url>scm:git:https://github.com/Netcracker/qubership-testing-platform-export-import-library.git</url>
       <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <repositories>
         <!-- Maven Central repository for release versions -->
@@ -129,6 +129,24 @@
                 </executions>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.15.0</version>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>1.18.44</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
     <profiles>
