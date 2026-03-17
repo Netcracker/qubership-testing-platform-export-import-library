@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.ei.node.exceptions.ExportException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -122,7 +122,7 @@ public class ObjectSaverToDiskService {
                                      boolean validateFileName) throws ExportException {
         fileName = validateFileName ? fileName.replaceAll(regexInvalidCharInFileName, "") : fileName;
         Path filePath = dir;
-        if (Strings.isNotBlank(parentName)) {
+        if (StringUtils.isNotBlank(parentName)) {
             filePath = fileService.createDirectory(parentName, filePath);
         }
         filePath = this.fileService.createFile(fileName + ".json", filePath);
