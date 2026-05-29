@@ -2,7 +2,7 @@
     <parent>
         <artifactId>qubership-atp-export-import-lib</artifactId>
         <groupId>org.qubership.atp.ei</groupId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <name>qubership-atp-export-import-lib</name>
@@ -11,8 +11,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <spring.boot.version>3.5.11</spring.boot.version>
-        <spring.cloud.version>2025.0.1</spring.cloud.version>
+        <spring.boot.version>3.5.14</spring.boot.version>
+        <spring.cloud.version>2025.0.2</spring.cloud.version>
         <google.guava.version>32.0.1-jre</google.guava.version>
         <mockito.version>5.23.0</mockito.version>
         <springdoc.version>2.8.16</springdoc.version>
@@ -21,20 +21,19 @@
         <model.mapper.version>2.3.2</model.mapper.version>
         <slf4j.version>2.0.17</slf4j.version>
         <shedlock.spring>4.12.0</shedlock.spring>
-        <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <micrometer.version>1.13.15</micrometer.version>
-        <ch.qos.logback.version>1.5.18</ch.qos.logback.version>
-        <tomcat-embed.version>9.0.110</tomcat-embed.version>
+        <ch.qos.logback.version>1.5.32</ch.qos.logback.version>
         <undertow.version>2.3.21.Final</undertow.version>
-        <bouncycastle.version>1.79</bouncycastle.version>
+        <bouncycastle.version>1.84</bouncycastle.version>
 
-        <atp.integration.version>1.0.1-SNAPSHOT</atp.integration.version>
-        <atp.auth.version>2.0.3-SNAPSHOT</atp.auth.version>
-        <atp.common.version>1.0.1-SNAPSHOT</atp.common.version>
+        <atp.integration.version>1.0.0</atp.integration.version>
+        <atp.auth.version>2.0.0</atp.auth.version>
+        <atp.common.version>1.0.0</atp.common.version>
 
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
         <lombok.version>1.18.44</lombok.version>
-        <junit.jupiter.version>5.10.5</junit.jupiter.version>
+        <junit.jupiter.version>5.12.2</junit.jupiter.version>
     </properties>
 
     <dependencyManagement>
@@ -42,7 +41,7 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
-                <version>4.1.125.Final</version>
+                <version>4.1.132.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -57,17 +56,6 @@
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework.security</groupId>
-                        <artifactId>spring-security-web</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-web</artifactId>
-                <version>6.5.8</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -96,14 +84,6 @@
                     <exclusion>
                         <groupId>org.bouncycastle</groupId>
                         <artifactId>bcpkix-jdk15to18</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcprov-jdk18on</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcpkix-jdk18on</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -136,6 +116,12 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -187,12 +173,12 @@
             <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
                 <artifactId>httpclient5</artifactId>
-                <version>5.4.1</version>
+                <version>5.4.4</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents.core5</groupId>
                 <artifactId>httpcore5</artifactId>
-                <version>5.3.3</version>
+                <version>5.3.4</version>
             </dependency>
             <dependency>
                 <groupId>org.modelmapper</groupId>
@@ -268,7 +254,7 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler</artifactId>
-                <version>4.1.125.Final</version>
+                <version>4.1.132.Final</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
@@ -304,58 +290,7 @@
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-clients</artifactId>
-                <version>3.9.1</version>
-            </dependency>
-            <!-- <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-el</artifactId>
-                <version>${tomcat-embed.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>${tomcat-embed.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-websocket</artifactId>
-                <version>${tomcat-embed.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.tomcat</groupId>
-                        <artifactId>tomcat-annotations-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-annotations-api</artifactId>
-                <version>${tomcat-embed.version}</version>
-            </dependency> -->
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core</artifactId>
-                <version>6.5.8</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>6.2.17</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-                <version>6.2.17</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-                <version>6.2.17</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webflux</artifactId>
-                <version>6.2.17</version>
+                <version>3.9.2</version>
             </dependency>
             <dependency>
                 <groupId>org.xmlunit</groupId>
@@ -380,7 +315,7 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http2</artifactId>
-                <version>4.1.125.Final</version>
+                <version>4.1.132.Final</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
@@ -396,68 +331,6 @@
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
                         <groupId>commons-logging</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-jwt</artifactId>
-                <version>1.1.1.RELEASE</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcprov-jdk15on</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcpkix-jdk15on</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcprov-jdk15to18</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcpkix-jdk15to18</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcprov-jdk18on</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcpkix-jdk18on</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-rsa</artifactId>
-                <version>1.0.11.RELEASE</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcprov-jdk15on</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcpkix-jdk15on</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcprov-jdk15to18</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcpkix-jdk15to18</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcprov-jdk18on</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcpkix-jdk18on</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
