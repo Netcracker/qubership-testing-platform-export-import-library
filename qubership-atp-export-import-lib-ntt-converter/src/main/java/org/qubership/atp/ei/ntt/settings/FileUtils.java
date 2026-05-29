@@ -289,8 +289,8 @@ public final class FileUtils {
         }
         trace("Try to read object from file [%s]".formatted(file.getPath()));
         Object obj = null;
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-            obj = ois.readObject();
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))) {
+            obj = objectInputStream.readObject();
             trace("Object [%s] was successfully read from file [%s]".formatted(obj, file.getPath()));
         } catch (ClassNotFoundException e) {
             log.error("ClassNotFoundException", e);

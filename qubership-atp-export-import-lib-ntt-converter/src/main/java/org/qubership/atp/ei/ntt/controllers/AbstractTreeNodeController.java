@@ -43,10 +43,10 @@ public abstract class AbstractTreeNodeController {
         if (item.length > 0) {
             TreeNode parent = item[0].getParent();
             if (parent != null) {
-                List<TreeNode> childs = parent.getChildren();
+                List<TreeNode> children = parent.getChildren();
                 Vector<Integer> itemsForRemove = new Vector<>(1, 1);
                 for (TreeNode treeNode : item) {
-                    int index = childs.indexOf(treeNode);
+                    int index = children.indexOf(treeNode);
                     if (index != -1) {
                         itemsForRemove.add(index);
                     }
@@ -54,7 +54,7 @@ public abstract class AbstractTreeNodeController {
                 int offset = 0;
                 int[] removedItems = new int[itemsForRemove.size()];
                 for (Integer index : itemsForRemove) {
-                    childs.remove(index - offset);
+                    children.remove(index - offset);
                     removedItems[offset] = index;
                     offset++;
                 }

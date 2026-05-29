@@ -137,7 +137,7 @@ public class Flag implements Serializable {
     }
 
     /**
-     * Sets state of the flag (enabled or desabled).
+     * Sets state of the flag (enabled or disabled).
      *
      * @param enabled State flag of the flag.
      */

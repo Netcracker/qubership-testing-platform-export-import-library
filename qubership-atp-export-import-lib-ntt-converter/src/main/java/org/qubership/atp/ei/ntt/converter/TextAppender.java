@@ -148,7 +148,7 @@ class TextAppender {
             mapping.append(tempModelItemName, isReadOnly).append(getFlagString(modelItem), isReadOnly);
             // ...+ ModelItemName + FlagString
             if (!isLeaf) {
-                inToHierarchy(); //going for childs
+                inToHierarchy(); // going for children
                 for (TreeNode child : modelItem.getChildren()) {
                     mapping.appendNewLine();
                     textAppendMethod.append((ModelItem) child, isReference);
@@ -173,15 +173,15 @@ class TextAppender {
 
                 } else if (modelItem instanceof Reference reference) {
                     tempModelItemName = ConverterConstants.TEMPLATE_ + getRefName(reference);
-                    isReference = true; //not needed to save childs of reference in file;
+                    isReference = true; //not needed to save children of reference in file;
                 }
                 mapping.append(tempModelItem); // ...+ ModelItemTypeName + ...
             }
             mapping.append(tempModelItemName).append(getFlagString(modelItem)); // ...+ ModelItemName + FlagString
             if (!isLeaf) {
-                inToHierarchy(); //going for childs
+                inToHierarchy(); //going for children
                 if (!isReference) {
-                    //not needed to save childs of reference in file;
+                    //not needed to save children of reference in file;
                     for (TreeNode child : modelItem.getChildren()) {
                         mapping.appendNewLine();
                         textAppendMethod.append((ModelItem) child, false);
