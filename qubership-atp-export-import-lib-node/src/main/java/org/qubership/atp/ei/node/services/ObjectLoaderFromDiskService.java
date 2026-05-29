@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -127,7 +127,7 @@ public class ObjectLoaderFromDiskService {
         try (Stream<Path> result = Files.find(workDir, 10,
                 (path, basicFileAttributes) -> path.getFileName().toString().contains(fileName))) {
             Optional<Path> file = result.findFirst();
-            if (!file.isPresent()) {
+            if (file.isEmpty()) {
                 log.info("Cannot find file with id {}", fileName);
             } else {
                 res = file.get();
@@ -339,8 +339,8 @@ public class ObjectLoaderFromDiskService {
         public JsonDeserializer<?> modifyCollectionDeserializer(
                 DeserializationConfig config, CollectionType type,
                 BeanDescription beanDesc, JsonDeserializer<?> deserializer) {
-            if (deserializer instanceof CollectionDeserializer) {
-                return new CustomizedCollectionDeserializer((CollectionDeserializer) deserializer);
+            if (deserializer instanceof CollectionDeserializer collectionDeserializer) {
+                return new CustomizedCollectionDeserializer(collectionDeserializer);
             } else {
                 return super.modifyCollectionDeserializer(config, type, beanDesc, deserializer);
             }

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -29,18 +29,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.commons.io.FileUtils;
 import org.bson.types.ObjectId;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.qubership.atp.ei.node.ImportExecutor;
 import org.qubership.atp.ei.node.constants.Constant;
 import org.qubership.atp.ei.node.dto.ExportImportData;
@@ -55,17 +55,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
 @Slf4j
 public class ImportNodeServiceImplTest extends AbstractConfigTest {
 
     private ImportExecutor importExecutor;
     private ImportNodeServiceImpl importNodeService;
     private List<TestData> testDataList;
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public File temporaryFolder;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -82,7 +83,7 @@ public class ImportNodeServiceImplTest extends AbstractConfigTest {
             }
 
             @Override
-            public ValidationResult preValidateData(ExportImportData importData, Path workDir) throws Exception {
+            public ValidationResult preValidateData(ExportImportData importData, Path workDir) {
                 return null;
             }
 
@@ -100,7 +101,7 @@ public class ImportNodeServiceImplTest extends AbstractConfigTest {
     }
 
     @Test
-    public void runValidation() throws ExecutionException, InterruptedException, ExportException, IOException {
+    public void runValidation() throws InterruptedException, ExportException, IOException {
         //
         // VALIDATION
         //
@@ -112,24 +113,24 @@ public class ImportNodeServiceImplTest extends AbstractConfigTest {
 
         importNodeService.validateImport(request);
 
-        // task should exists
+        // task should exist
         Future<Object> task = tasksService.getTaskById(taskId);
-        Assert.assertNotNull(task);
+        Assertions.assertNotNull(task);
 
-        // unzip json file should exists
-        Thread.sleep(1 * 1000);
+        // unzip json file should exist
+        Thread.sleep(1000);
         Path importFolder = fileService.getFolderPath(projectId, processId, Constant.IMPORT);
         Path jsonFileForValidation = importFolder.resolve(jsonForValidationName);
-        Assert.assertTrue(Files.exists(jsonFileForValidation));
+        Assertions.assertTrue(Files.exists(jsonFileForValidation));
 
         // saved zip file should not be exists
         Path importZipFile = fileService.getFilePath(projectId, taskId, Constant.IMPORT);
-        Assert.assertFalse(Files.exists(importZipFile));
+        Assertions.assertFalse(Files.exists(importZipFile));
 
         // task should not be exists
-        Thread.sleep(5 * 1000);
+        Thread.sleep(5000);
         task = tasksService.getTaskById(taskId);
-        Assert.assertNull(task);
+        Assertions.assertNull(task);
 
         //
         // IMPORT
@@ -141,15 +142,15 @@ public class ImportNodeServiceImplTest extends AbstractConfigTest {
         importNodeService.runImport(request);
 
         // import folder should be exists
-        Assert.assertTrue(Files.exists(importFolder));
+        Assertions.assertTrue(Files.exists(importFolder));
 
         Thread.sleep(10 * 1000);
 
         // import folder should not be exists
-        Assert.assertFalse(Files.exists(importFolder));
+        Assertions.assertFalse(Files.exists(importFolder));
 
         // list should be not empty
-        Assert.assertEquals(testDataList, Collections.singletonList(new TestData(111, "test")));
+        Assertions.assertEquals(testDataList, Collections.singletonList(new TestData(111, "test")));
 
     }
 
@@ -162,9 +163,9 @@ public class ImportNodeServiceImplTest extends AbstractConfigTest {
                 .thenReturn(new InputStreamResource(FileUtils.openInputStream(zipForValidation.getFile())));
 
         importNodeService.validateImport(request);
-        Thread.sleep(1 * 1000);
+        Thread.sleep(1000);
         tasksService.cancelTask(taskId);
-        Thread.sleep(10 * 1000);
+        Thread.sleep(10000);
 
         verify(notifyService, times(0)).notifyImportFlow(any(), any());
     }

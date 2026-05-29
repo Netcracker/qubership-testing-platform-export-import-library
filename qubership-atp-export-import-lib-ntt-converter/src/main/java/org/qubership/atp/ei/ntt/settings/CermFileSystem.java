@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -22,10 +22,8 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 
-import javax.annotation.Nonnull;
-
 import com.google.common.base.Charsets;
-
+import jakarta.annotation.Nonnull;
 
 public final class CermFileSystem {
 
@@ -89,7 +87,7 @@ public final class CermFileSystem {
             File probeFile = new File(".");
             String path;
             try {
-                path = URLDecoder.decode(probeFile.getCanonicalPath(), Charsets.UTF_8.name());
+                path = URLDecoder.decode(probeFile.getCanonicalPath(), Charsets.UTF_8);
             } catch (IOException ex) {
                 path = probeFile.getAbsolutePath();
             }

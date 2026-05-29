@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,9 +20,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
 
-import javax.validation.constraints.NotNull;
-
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.ei.node.exceptions.ExportException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,6 +29,7 @@ import org.springframework.util.Assert;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -123,7 +122,7 @@ public class ObjectSaverToDiskService {
                                      boolean validateFileName) throws ExportException {
         fileName = validateFileName ? fileName.replaceAll(regexInvalidCharInFileName, "") : fileName;
         Path filePath = dir;
-        if (Strings.isNotBlank(parentName)) {
+        if (StringUtils.isNotBlank(parentName)) {
             filePath = fileService.createDirectory(parentName, filePath);
         }
         filePath = this.fileService.createFile(fileName + ".json", filePath);

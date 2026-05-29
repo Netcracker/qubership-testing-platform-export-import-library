@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -22,9 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.ei.ntt.settings.ReflectionUtils;
 import org.qubership.atp.ei.ntt.settings.model.dal.SettingsResource;
@@ -38,6 +35,8 @@ import org.qubership.atp.ei.ntt.settings.model.dal.settings.ServersSettingsDal;
 import org.qubership.atp.ei.ntt.settings.model.dal.support.DaoFactory;
 import org.qubership.atp.ei.ntt.settings.model.environment.EnvironmentStorage;
 
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public final class Settings {
 
@@ -91,10 +90,10 @@ public final class Settings {
      */
     public static class EnvironmentSettings implements EnvironmentStorage {
 
-        private List<EnvironmentListDal> envListDals = factory.get(
+        private final List<EnvironmentListDal> envListDals = factory.get(
                                                         settingsDAO, EnvironmentListsSectionDal.class)
                                                         .getEnvironmentLists();
-        private List<EnvironmentItemLinkDal> envItemLinkDals = factory.get(
+        private final List<EnvironmentItemLinkDal> envItemLinkDals = factory.get(
                                                                 settingsDAO, EnvironmentItemLinksSectionDal.class)
                                                                 .getEnvironmentItemLinks();
 
@@ -241,7 +240,7 @@ public final class Settings {
 
     public static class ServerTypesSettings {
 
-        private List<String> serverTypes = factory.get(settingsDAO, ServerTypesDal.class).getTypes();
+        private final List<String> serverTypes = factory.get(settingsDAO, ServerTypesDal.class).getTypes();
 
         public List<String> getTypes() {
 
@@ -266,7 +265,7 @@ public final class Settings {
 
     public static class ServersSettings {
 
-        private Map<String, ServerDal> serversMap = new HashMap<>();
+        private final Map<String, ServerDal> serversMap = new HashMap<>();
 
         /**
          * TODO Make javadoc documentation for this method.
@@ -323,8 +322,7 @@ public final class Settings {
 
             serverSettings.getServerList().clear();
 
-            serversMap.entrySet()
-                .forEach(entry -> serverSettings.getServerList().add(entry.getValue()));
+            serversMap.forEach((key, value) -> serverSettings.getServerList().add(value));
         }
 
         /**
@@ -347,7 +345,7 @@ public final class Settings {
         public ServerDal[] getServers() {
 
             Collection<ServerDal> servers = getServersMap().values();
-            return servers.toArray(new ServerDal[servers.size()]);
+            return servers.toArray(new ServerDal[0]);
         }
 
         /**

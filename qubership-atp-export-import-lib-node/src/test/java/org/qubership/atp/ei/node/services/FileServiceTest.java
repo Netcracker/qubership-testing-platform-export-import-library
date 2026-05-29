@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -22,22 +22,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.WARN)
+@ExtendWith(MockitoExtension.class)
 public class FileServiceTest {
-    
-    @Rule
-    public TemporaryFolder workDir = new TemporaryFolder();
+
+    @TempDir
+    public File workDir;
 
     private FileService service;
 
-    @Before
+    @BeforeEach
     public void init() {
         service = new FileService();
     }
@@ -55,19 +57,19 @@ public class FileServiceTest {
      *              -outdated3LevelFile.zip (delete)
      *          -freshButEmptyFolder (delete)
      *      -fresh1LevelFile.txt (not delete)
-     * @throws IOException
+     * @throws IOException in case file errors
      */
     @Test
     public void removeAllOutdatedFiles() throws IOException {
         long expirationTime = 120 * 1000;
-        File outdatedButNotEmptyFolder = workDir.newFolder("outdatedButNotEmptyFolder");
+        File outdatedButNotEmptyFolder = newFolder(workDir, "outdatedButNotEmptyFolder");
         File outdatedFileInOutdatedFolder = new File(outdatedButNotEmptyFolder, "outdatedFileInOutdatedFolder.txt");
         outdatedFileInOutdatedFolder.createNewFile();
         File fresh2LevelFolder = new File(outdatedButNotEmptyFolder, "fresh2LevelFolder");
         fresh2LevelFolder.mkdir();
         File fresh3LevelFile = new File(fresh2LevelFolder, "fresh3LevelFile.zip");
         fresh3LevelFile.createNewFile();
-        File fresh1LevelFolder = workDir.newFolder("fresh1LevelFolder");
+        File fresh1LevelFolder = newFolder(workDir, "fresh1LevelFolder");
         File fresh2LevelFile = new File(fresh1LevelFolder, "fresh2LevelFile.txt");
         fresh2LevelFile.createNewFile();
         File outdated2LevelFile = new File(fresh1LevelFolder, "outdated2LevelFile.zip");
@@ -79,7 +81,7 @@ public class FileServiceTest {
         File freshButEmptyFolder = new File(fresh1LevelFolder, "freshButEmptyFolder");
         freshButEmptyFolder.mkdir();
         fresh1LevelFolder.mkdir();
-        File fresh1LevelFile = workDir.newFile("fresh1LevelFile.txt");
+        File fresh1LevelFile = newFile(workDir, "fresh1LevelFile.txt");
 
         long lastModifiedTimeForOutdatedFiles = System.currentTimeMillis() - expirationTime * 4;
         outdatedButNotEmptyFolder.setLastModified(lastModifiedTimeForOutdatedFiles);
@@ -88,7 +90,7 @@ public class FileServiceTest {
         outdated2LevelFolder.setLastModified(lastModifiedTimeForOutdatedFiles);
         outdated3LevelFile.setLastModified(lastModifiedTimeForOutdatedFiles);
 
-        service.removeAllOutdatedFilesAndFolders(workDir.getRoot().toPath(), expirationTime);
+        service.removeAllOutdatedFilesAndFolders(workDir.toPath(), expirationTime);
 
         assertFalse(outdatedFileInOutdatedFolder.exists(),
                 "Outdated folder " + outdatedFileInOutdatedFolder.getAbsolutePath() + " not deleted");
@@ -108,5 +110,20 @@ public class FileServiceTest {
         assertTrue(fresh1LevelFolder.exists(), "Fresh folder " + fresh1LevelFolder.getPath() + " deleted");
         assertTrue(fresh2LevelFile.exists(), "Fresh file " + fresh2LevelFile.getPath() + " deleted");
         assertTrue(fresh1LevelFile.exists(), "Fresh file " + fresh1LevelFile.getPath() + " deleted");
+    }
+
+    private static File newFolder(File root, String... subDirs) throws IOException {
+        String subFolder = String.join("/", subDirs);
+        File result = new File(root, subFolder);
+        if (!result.mkdirs()) {
+            throw new IOException("Couldn't create folders " + root);
+        }
+        return result;
+    }
+
+    private static File newFile(File parent, String child) throws IOException {
+        File result = new File(parent, child);
+        result.createNewFile();
+        return result;
     }
 }

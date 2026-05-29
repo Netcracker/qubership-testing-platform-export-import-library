@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import static org.qubership.atp.ei.ntt.Constants.PATH_TO_FILES;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -146,7 +144,7 @@ public class NttProjectConverter implements ExportConverter {
     private void createScopesForExistingScopes() {
         log.debug("start createScopesForExistingScopes()");
         List<UUID> scopeIds = nttScopeMaps.getNttTestSuite2atpTestScope()
-                .values().stream().distinct().collect(Collectors.toList());
+                .values().stream().distinct().toList();
 
         scopeIds.forEach(atpScopeId -> {
                     log.trace("loop scopeIds: {}", atpScopeId);
@@ -164,7 +162,7 @@ public class NttProjectConverter implements ExportConverter {
                             .entrySet().stream()
                             .filter(testSuiteIdEntry -> testSuiteIdEntry.getValue().equals(atpScopeId))
                             .map(Map.Entry::getKey)
-                            .collect(Collectors.toList());
+                            .toList();
 
                     List<NttTestCase> testCases0 = new ArrayList<>();
                     testSuites.forEach(testSuite1 -> testCases0.addAll(testSuite1.getTestCases()));
@@ -416,7 +414,7 @@ public class NttProjectConverter implements ExportConverter {
 
     private String convertUseDirectiveToActionSwitch(ArrayList<String> useDirectiveValues) {
         return useDirectiveValues != null && !useDirectiveValues.isEmpty()
-                ? String.format(NTT_ACTION_SWITCH_TO_SERVER, useDirectiveValues.get(0))
+                ? NTT_ACTION_SWITCH_TO_SERVER.formatted(useDirectiveValues.getFirst())
                 : null;
     }
 
@@ -653,7 +651,7 @@ public class NttProjectConverter implements ExportConverter {
             if (file != null) {
                 Path nttPath = file.subpath(rootForFiles.getNameCount(), file.getNameCount());
                 nttDataSet.getProject().getFiles().put(nttPath, file);
-                variable.setValue(Paths.get(PATH_TO_FILES).resolve(nttPath).toString());
+                variable.setValue(Path.of(PATH_TO_FILES).resolve(nttPath).toString());
             }
         }
     }
@@ -799,9 +797,8 @@ public class NttProjectConverter implements ExportConverter {
      * Convert data set into ntt format.
      *
      * @return the ntt export converter result
-     * @throws Exception the exception
      */
-    public NttExportConverterResult convertDataSet() throws Exception {
+    public NttExportConverterResult convertDataSet() {
         createProjects();
         insertVariablesInNttDataSets();
 
@@ -816,11 +813,10 @@ public class NttProjectConverter implements ExportConverter {
      * @param dataSetIdNameMap     the data set id name map
      * @param dataSetIdParentIdMap the data set id parent id map
      * @return the ntt export converter result
-     * @throws Exception the exception
      */
     public NttExportConverterResult convertCatalog(Map<UUID, String> dataSetListIdNameMap,
                                                    Map<UUID, String> dataSetIdNameMap,
-                                                   Map<UUID, UUID> dataSetIdParentIdMap) throws Exception {
+                                                   Map<UUID, UUID> dataSetIdParentIdMap) {
         log.debug("start convertCatalog(dataSetListIdNameMap: {}, dataSetIdNameMap: {}, dataSetIdParentIdMap: {})",
                 dataSetListIdNameMap, dataSetIdNameMap, dataSetIdParentIdMap);
 
@@ -933,7 +929,7 @@ public class NttProjectConverter implements ExportConverter {
             result = objectMapper.readValue(in, clazz);
         } catch (Exception e) {
             log.error("Cannot read data from file {}, id {}, class {}", file, id, clazz, e);
-            throw new RuntimeException(String.format("Cannot read data from file %s", file), e);
+            throw new RuntimeException("Cannot read data from file %s".formatted(file), e);
         }
         log.debug("end (loadFileAsObject: {}, clazz: {})", file, clazz);
         return result;
@@ -948,7 +944,7 @@ public class NttProjectConverter implements ExportConverter {
                 (path, basicFileAttributes) -> path.getFileName().toString().contains(fileName))) {
             res = result.findFirst();
         }
-        if (!res.isPresent()) {
+        if (res.isEmpty()) {
             return null;
         }
         Path result = res.get();

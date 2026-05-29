@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -20,12 +20,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang3.StringUtils;
 import org.qubership.atp.ei.ntt.model.ContextVariable;
 import org.qubership.atp.ei.ntt.model.DataSet;
 
+import jakarta.annotation.Nonnull;
 
 public class ConfigurationUtils {
 

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package org.qubership.atp.ei.ntt.model.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.Unmarshaller;
-
 import org.qubership.atp.ei.ntt.model.Cloneable;
 import org.qubership.atp.ei.ntt.model.ModelItem;
 import org.qubership.atp.ei.ntt.model.NttTestCase;
@@ -28,6 +26,7 @@ import org.qubership.atp.ei.ntt.model.TestStep;
 import org.qubership.atp.ei.ntt.model.TestSuite;
 import org.qubership.atp.ei.ntt.model.enums.ModelItemType;
 
+import jakarta.xml.bind.Unmarshaller;
 
 /**
  * TestCase item class.

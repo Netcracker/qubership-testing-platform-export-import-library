@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -52,8 +52,8 @@ public abstract class AbstractModelItem extends AbstractTreeNode implements Mode
     @Override
     public Project getProject() {
 
-        if (this instanceof Project) {
-            return (Project) this;
+        if (this instanceof Project project) {
+            return project;
         }
 
         TreeNode item = getParent();
@@ -103,11 +103,11 @@ public abstract class AbstractModelItem extends AbstractTreeNode implements Mode
 
         TreeNode tmp = this;
         while (tmp != null) {
-            if (tmp instanceof Template) {
-                return (Template) tmp;
+            if (tmp instanceof Template template) {
+                return template;
             }
-            if (tmp instanceof ReferenceModelItem) {
-                return ((ReferenceModelItem) tmp).getTemplate();
+            if (tmp instanceof ReferenceModelItem item) {
+                return item.getTemplate();
             }
 
             tmp = tmp.getParent();

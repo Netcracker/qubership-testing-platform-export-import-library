@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -22,16 +22,14 @@ import org.qubership.atp.auth.springbootstarter.config.FeignConfiguration;
 import org.qubership.atp.ei.node.dto.ExportImportReportRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @FeignClient(name = "${feign.atp.ei.name}", url = "${feign.atp.ei.url}",
         configuration = FeignConfiguration.class)
 public interface ExportImportFeignClient {
 
-    @RequestMapping(method = RequestMethod.POST,
-            value = "${feign.atp.ei.route}/ei/api/v1/flow/{exportImportType}"
+    @PostMapping("${feign.atp.ei.route}/ei/api/v1/flow/{exportImportType}"
                     + "/{projectId}/processes/{processId}/tasks/{taskId}/report")
     void report(@PathVariable("exportImportType") String exportImportType,
                 @PathVariable("projectId") UUID projectId,

@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -59,13 +59,13 @@ public abstract class AbstractOptionProcessor<T> implements OptionProcessor<T> {
     @Override
     public void saveOptions(Object object, Field field, T source) throws OptionProcessException {
         Type fieldGenericType = field.getGenericType();
-        if (fieldGenericType instanceof ParameterizedType) {
-            Class<?> fieldClass = (Class<?>) ((ParameterizedType) fieldGenericType).getRawType();
-            Type fieldTypeParameter = ((ParameterizedType) fieldGenericType).getActualTypeArguments()[0];
+        if (fieldGenericType instanceof ParameterizedType type1) {
+            Class<?> fieldClass = (Class<?>) type1.getRawType();
+            Type fieldTypeParameter = type1.getActualTypeArguments()[0];
             if (Collection.class.isAssignableFrom(fieldClass)) {
                 Class<?> collectionClass;
-                if (fieldTypeParameter instanceof ParameterizedType) {
-                    collectionClass = (Class<?>) ((ParameterizedType) fieldTypeParameter).getRawType();
+                if (fieldTypeParameter instanceof ParameterizedType type) {
+                    collectionClass = (Class<?>) type.getRawType();
                 } else {
                     collectionClass = (Class<?>) fieldTypeParameter;
                 }
@@ -74,8 +74,8 @@ public abstract class AbstractOptionProcessor<T> implements OptionProcessor<T> {
                 if (fieldValue == null) {
                     toIterate = Lists.newArrayList();
                 } else {
-                    if (fieldValue instanceof List) {
-                        toIterate = (List) fieldValue;
+                    if (fieldValue instanceof List list) {
+                        toIterate = list;
                     } else {
                         toIterate = Lists.newArrayListWithCapacity(Iterables.size((Iterable<?>) fieldValue));
                         toIterate.addAll((Collection) fieldValue);
@@ -85,10 +85,10 @@ public abstract class AbstractOptionProcessor<T> implements OptionProcessor<T> {
 
                 iterate(key, source, toIterate, collectionClass);
             } else {
-                throw new OptionProcessException(String.format("Unsupported raw type: %s", fieldClass));
+                throw new OptionProcessException("Unsupported raw type: %s".formatted(fieldClass));
             }
         } else {
-            throw new OptionProcessException(String.format("Unknown field type: %s", fieldGenericType));
+            throw new OptionProcessException("Unknown field type: %s".formatted(fieldGenericType));
         }
     }
 

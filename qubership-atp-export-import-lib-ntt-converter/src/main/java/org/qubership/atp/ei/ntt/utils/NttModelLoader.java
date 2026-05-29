@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import static org.qubership.atp.ei.ntt.Constants.EXPORT_PROJECTS_FOLDER_NAME;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -29,10 +28,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +56,9 @@ import org.qubership.atp.ei.ntt.scope.ScopeDaoFactory;
 import org.qubership.atp.ei.ntt.settings.model.dal.SettingsResource;
 import org.qubership.atp.ei.ntt.settings.model.dal.support.DaoFactory;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -111,8 +109,8 @@ public class NttModelLoader {
 
     private void clearReferences(TreeNode treeNode) {
         for (TreeNode node : treeNode.getChildren()) {
-            if (node instanceof Reference) {
-                ((Reference) node).setTemplate(null);
+            if (node instanceof Reference reference) {
+                reference.setTemplate(null);
             }
             clearReferences(node);
         }
@@ -261,7 +259,7 @@ public class NttModelLoader {
                     : Constants.TXT_PROJECT_EXTENTION;
             Path projectFile = directory.resolve(fileName + projectFileExtension);
 
-            Files.write(projectFile, projectFileText.getBytes(StandardCharsets.UTF_8));
+            Files.writeString(projectFile, projectFileText);
         }
     }
 
@@ -299,7 +297,7 @@ public class NttModelLoader {
 
         log.debug("dataSetFileText: {}", dataSetFileText);
 
-        Files.write(dataSetFile, dataSetFileText.getBytes(StandardCharsets.UTF_8));
+        Files.writeString(dataSetFile, dataSetFileText);
 
         Path filesDirectory = createFolder(directoryPath.resolve(EXPORT_FILES_FOLDER_NAME));
 

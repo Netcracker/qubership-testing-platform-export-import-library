@@ -1,5 +1,5 @@
 /*
- * # Copyright 2024-2025 NetCracker Technology Corporation
+ * # Copyright 2024-2026 NetCracker Technology Corporation
  * #
  * # Licensed under the Apache License, Version 2.0 (the "License");
  * # you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package org.qubership.atp.ei.ntt.model.enums;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import org.qubership.atp.ei.ntt.model.ModelItem;
 import org.qubership.atp.ei.ntt.model.NttTestCase;
 import org.qubership.atp.ei.ntt.model.Project;
@@ -27,6 +24,8 @@ import org.qubership.atp.ei.ntt.model.TestStep;
 import org.qubership.atp.ei.ntt.model.TestSuite;
 
 import com.google.common.base.Preconditions;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * The enum Model item type.
@@ -43,8 +42,8 @@ public enum ModelItemType {
     STEP(TestStep.class, "TestStep"),
     ACTION(TestAction.class, "TestAction");
 
-    private Class<? extends ModelItem> clazz;
-    private String name;
+    private final Class<? extends ModelItem> clazz;
+    private final String name;
 
     ModelItemType(Class<? extends ModelItem> clazz, String name) {
 
