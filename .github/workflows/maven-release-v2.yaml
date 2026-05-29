@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Build and Publish current SNAPSHOT (dry run)"
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@v2.1.1
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@v2.2.2
         with:
           java-version: "21"
           version-type: ${{ github.event.inputs.version-type }}
@@ -96,7 +96,7 @@ jobs:
           private-key: ${{ secrets.GH_BUMP_VERSION_APP_KEY }}
       - name: "Build and Publish"
         id: build-and-publish
-        uses: netcracker/qubership-workflow-hub/actions/maven-release@v2.1.1
+        uses: netcracker/qubership-workflow-hub/actions/maven-release@v2.2.2
         with:
           java-version: "21"
           version-type: ${{ github.event.inputs.version-type }}
@@ -112,7 +112,7 @@ jobs:
           gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
           dry-run: 'false'
       - name: Upload all Maven target directories
-        uses: actions/upload-artifact@v7.0.0
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: ${{ github.event.repository.name }}
           path: '**/target'
@@ -157,7 +157,7 @@ jobs:
   github-release:
     needs: [deploy]
     if: ${{ needs.deploy.result == 'success' }}
-    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@v2.1.1
+    uses: netcracker/qubership-workflow-hub/.github/workflows/release-drafter.yml@v2.2.2
     with:
       version: ${{ needs.deploy.outputs.release-version }}
       publish: true
