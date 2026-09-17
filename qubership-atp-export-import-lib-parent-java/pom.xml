@@ -24,15 +24,15 @@
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <micrometer.version>1.13.15</micrometer.version>
         <ch.qos.logback.version>1.5.32</ch.qos.logback.version>
-        <undertow.version>2.3.21.Final</undertow.version>
+        <undertow.version>2.3.24.Final</undertow.version>
         <bouncycastle.version>1.84</bouncycastle.version>
 
         <atp.integration.version>1.0.0</atp.integration.version>
-        <atp.auth.version>2.0.0</atp.auth.version>
+        <atp.auth.version>2.0.1</atp.auth.version>
         <atp.common.version>1.0.0</atp.common.version>
 
         <mapstruct.version>1.6.3</mapstruct.version>
-        <lombok.version>1.18.44</lombok.version>
+        <lombok.version>1.18.46</lombok.version>
         <junit.jupiter.version>5.12.2</junit.jupiter.version>
     </properties>
 
@@ -173,12 +173,12 @@
             <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
                 <artifactId>httpclient5</artifactId>
-                <version>5.4.4</version>
+                <version>5.5.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents.core5</groupId>
                 <artifactId>httpcore5</artifactId>
-                <version>5.3.4</version>
+                <version>5.3.6</version>
             </dependency>
             <dependency>
                 <groupId>org.modelmapper</groupId>
@@ -240,11 +240,13 @@
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
                 <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.vintage</groupId>
                 <artifactId>junit-vintage-engine</artifactId>
                 <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>io.projectreactor.netty</groupId>
