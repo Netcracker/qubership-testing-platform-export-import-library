@@ -31,8 +31,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.StreamReadConstraints;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -72,8 +76,17 @@ public class ObjectLoaderFromDiskService {
     /**
      * Instantiates a new Object loader from disk service.
      */
-    public ObjectLoaderFromDiskService() {
-        objectMapper = new ObjectMapper();
+    public ObjectLoaderFromDiskService(
+            @Value("${object.mapper.max.string.length:25_000_000}") int objectMapperMaxStringLength) {
+        StreamReadConstraints constraints = StreamReadConstraints.builder()
+                .maxStringLength(objectMapperMaxStringLength)
+                .build();
+
+        JsonFactory jsonFactory = JsonFactory.builder()
+                .streamReadConstraints(constraints)
+                .build();
+
+        objectMapper = JsonMapper.builder(jsonFactory).build();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 

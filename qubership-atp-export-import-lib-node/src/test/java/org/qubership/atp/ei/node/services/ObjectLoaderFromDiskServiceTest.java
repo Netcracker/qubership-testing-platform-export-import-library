@@ -50,7 +50,7 @@ public class ObjectLoaderFromDiskServiceTest {
 
     @BeforeEach
     public void setUp() {
-        objectLoaderFromDiskService = new ObjectLoaderFromDiskService();
+        objectLoaderFromDiskService = new ObjectLoaderFromDiskService(25_000_000);
     }
 
     @Test
