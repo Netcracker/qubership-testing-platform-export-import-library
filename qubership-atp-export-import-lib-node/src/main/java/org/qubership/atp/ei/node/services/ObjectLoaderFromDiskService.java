@@ -77,7 +77,7 @@ public class ObjectLoaderFromDiskService {
      * Instantiates a new Object loader from disk service.
      */
     public ObjectLoaderFromDiskService(
-            @Value("${object.mapper.max.string.length:25_000_000}") int objectMapperMaxStringLength) {
+            @Value("${object.mapper.max.string.length:25000000}") int objectMapperMaxStringLength) {
         StreamReadConstraints constraints = StreamReadConstraints.builder()
                 .maxStringLength(objectMapperMaxStringLength)
                 .build();
